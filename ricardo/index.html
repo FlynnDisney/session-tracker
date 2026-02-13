@@ -417,6 +417,87 @@
   }
   .date-field:focus { border-color: var(--accent); }
 
+  /* ── Diary ── */
+  .diary-entry {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+  }
+  .diary-date {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .diary-session-badge {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-glow);
+    padding: 2px 8px;
+    border-radius: 12px;
+  }
+  .diary-exercise {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 13px;
+  }
+  .diary-exercise + .diary-exercise {
+    border-top: 1px solid var(--border);
+    padding-top: 6px;
+    margin-top: 2px;
+  }
+  .diary-ex-name {
+    color: var(--text-2);
+    flex: 1;
+  }
+  .diary-ex-data {
+    color: var(--text);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 13px;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .diary-emotions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .diary-emotion-chip {
+    font-size: 11px;
+    color: var(--emotion);
+    background: var(--emotion-glow);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .diary-notes {
+    font-size: 12px;
+    color: var(--text-3);
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    font-style: italic;
+    line-height: 1.4;
+  }
+  .diary-empty {
+    text-align: center;
+    color: var(--text-3);
+    font-size: 13px;
+    padding: 24px 0;
+  }
+
   /* ── Status Bar ── */
   .status-bar {
     position: fixed;
@@ -644,6 +725,76 @@ function allTrackIdsForSession(sessionName) {
   return ids;
 }
 
+function getFieldLabel(fieldId, sessionName) {
+  const prog = CONFIG.PROGRAMS[sessionName];
+  if (!prog) return null;
+  if (prog.bounces) {
+    for (const t of prog.bounces.track) {
+      if (t.id === fieldId) return { exercise: prog.bounces.name, label: t.label, unit: t.unit };
+    }
+  }
+  for (const ex of prog.exercises) {
+    for (const t of ex.track) {
+      if (t.id === fieldId) return { exercise: ex.name, label: t.label, unit: t.unit };
+    }
+  }
+  return null;
+}
+
+function renderDiaryEntry(entry) {
+  const sessionName = entry.session;
+  const prog = CONFIG.PROGRAMS[sessionName];
+  if (!prog) return '';
+
+  const fmtDate = (d) => {
+    try { return new Date(d).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }); }
+    catch { return d; }
+  };
+
+  const exerciseData = {};
+  const allExercises = [];
+  if (prog.bounces) allExercises.push({ name: prog.bounces.name, fields: prog.bounces.track });
+  prog.exercises.forEach(ex => allExercises.push({ name: ex.name, fields: ex.track }));
+
+  allExercises.forEach(ex => {
+    const values = [];
+    ex.fields.forEach(t => {
+      const val = entry.strength ? entry.strength[t.id] : '';
+      if (val !== '' && val !== undefined && val !== null) {
+        values.push(t.label + ': ' + val + (t.unit ? ' ' + t.unit : ''));
+      }
+    });
+    if (values.length > 0) {
+      exerciseData[ex.name] = values.join(' · ');
+    }
+  });
+
+  const exerciseNames = Object.keys(exerciseData);
+  if (exerciseNames.length === 0 && !entry.notes) return '';
+
+  const emotionChips = CONFIG.EMOTIONS
+    .filter(e => entry.emotions && entry.emotions[e.name] && entry.emotions[e.name] !== '')
+    .map(e => `<span class="diary-emotion-chip">${e.name} ${entry.emotions[e.name]}/5</span>`)
+    .join('');
+
+  return `
+    <div class="diary-entry">
+      <div class="diary-date">
+        <span>${fmtDate(entry.date)}</span>
+        <span class="diary-session-badge">${sessionName}</span>
+      </div>
+      ${exerciseNames.map(name => `
+        <div class="diary-exercise">
+          <span class="diary-ex-name">${name}</span>
+          <span class="diary-ex-data">${exerciseData[name]}</span>
+        </div>
+      `).join('')}
+      ${emotionChips ? `<div class="diary-emotions">${emotionChips}</div>` : ''}
+      ${entry.notes ? `<div class="diary-notes">${entry.notes}</div>` : ''}
+    </div>
+  `;
+}
+
 function getLoadMetrics(sessionName) {
   const prog = CONFIG.PROGRAMS[sessionName];
   if (!prog) return [];
@@ -659,14 +810,16 @@ function getLoadMetrics(sessionName) {
 // STATE
 // ════════════════════════════════════════════════════════════════
 
+const TABS = [...CONFIG.SESSIONS, 'Diary'];
+
 const state = {
   scriptUrl: CONFIG.SCRIPT_URL,
   activeTab: 0,
   emotions: CONFIG.EMOTIONS.reduce((o, e) => ({ ...o, [e.name]: 3 }), {}),
-  tracking: {},  // { field_id: value }
+  tracking: {},
   notes: '',
-  date: new Date().toISOString().split('T')[0],
   history: [],
+  allHistory: [],
   graphMode: 'emotions',
   submitting: false,
   isAdmin: new URLSearchParams(window.location.search).get('admin') === 'true',
@@ -676,9 +829,14 @@ const state = {
 // RENDER
 // ════════════════════════════════════════════════════════════════
 
+function isDiary() {
+  return TABS[state.activeTab] === 'Diary';
+}
+
 function render() {
   const app = document.getElementById('app');
-  const prog = currentProgram();
+  const diary = isDiary();
+  const prog = diary ? null : currentProgram();
 
   app.innerHTML = `
     <div class="header">
@@ -687,17 +845,35 @@ function render() {
     </div>
 
     <div class="tabs" role="tablist">
-      ${CONFIG.SESSIONS.map((s, i) => `
+      ${TABS.map((s, i) => `
         <button class="tab ${i === state.activeTab ? 'active' : ''}" 
                 onclick="setTab(${i})" role="tab">${s}</button>
       `).join('')}
     </div>
 
+    ${diary ? renderDiaryView() : renderSessionForm(prog)}
+
+    ${state.isAdmin ? `
+      <div class="section-label" style="color: var(--text-3); margin-top: 12px;">Admin</div>
+      <div class="card" style="font-size: 13px; color: var(--text-2);">
+        <p style="margin-bottom: 4px;">Connected to Google Sheet ✓</p>
+        <p>Entries: ${diary ? state.allHistory.length : state.history.length} · Tab: ${TABS[state.activeTab]}</p>
+      </div>
+    ` : ''}
+  `;
+
+  if (!diary && state.history.length >= 2) {
+    requestAnimationFrame(drawChart);
+  }
+  if (!diary) renderLegend();
+}
+
+function renderSessionForm(prog) {
+  return `
     <div style="padding: 8px 0; font-size: 13px; color: var(--text-2);">
       ${new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
     </div>
 
-    <!-- ── Bounces ── -->
     ${prog.bounces ? `
       <div class="section-label bounce">Bounces</div>
       <div class="card">
@@ -729,7 +905,6 @@ function render() {
       </div>
     ` : ''}
 
-    <!-- ── Exercises ── -->
     <div class="section-label strength">Exercises</div>
     <div class="card">
       ${prog.exercises.map((ex, i) => `
@@ -762,7 +937,6 @@ function render() {
       `).join('')}
     </div>
 
-    <!-- ── Emotion Check-in ── -->
     <div class="section-label emotion">Emotion Check-in</div>
     <div class="card">
       ${CONFIG.EMOTIONS.map(e => `
@@ -781,7 +955,6 @@ function render() {
       `).join('')}
     </div>
 
-    <!-- ── Notes ── -->
     <div class="section-label" style="color: var(--text-3)">Notes</div>
     <div class="card">
       <textarea class="notes-field" placeholder="Session notes, RPE, how it felt…"
@@ -792,7 +965,6 @@ function render() {
       ${state.submitting ? 'Saving…' : 'Log Session'}
     </button>
 
-    <!-- ── Trend Graph ── -->
     <div class="section-label" style="color: var(--text-3); margin-top: 12px;">Trends</div>
     <div class="graph-container">
       <div class="graph-header">
@@ -807,20 +979,15 @@ function render() {
         ${state.history.length < 2 ? '<div class="empty-graph">Log at least 2 sessions to see trends</div>' : '<canvas id="trendChart"></canvas>'}
       </div>
     </div>
-
-    ${state.isAdmin ? `
-      <div class="section-label" style="color: var(--text-3); margin-top: 12px;">Admin</div>
-      <div class="card" style="font-size: 13px; color: var(--text-2);">
-        <p style="margin-bottom: 4px;">Connected to Google Sheet ✓</p>
-        <p>Entries: ${state.history.length} · Session: ${CONFIG.SESSIONS[state.activeTab]}</p>
-      </div>
-    ` : ''}
   `;
+}
 
-  if (state.history.length >= 2) {
-    requestAnimationFrame(drawChart);
+function renderDiaryView() {
+  const entries = state.allHistory.slice().reverse();
+  if (entries.length === 0) {
+    return '<div class="diary-empty" style="padding: 40px 0;">No sessions logged yet</div>';
   }
-  renderLegend();
+  return entries.map(entry => renderDiaryEntry(entry)).filter(h => h).join('');
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -830,8 +997,12 @@ function render() {
 function setTab(i) {
   state.activeTab = i;
   state.tracking = {};
+  if (isDiary()) {
+    loadAllHistory();
+  } else {
+    loadHistory();
+  }
   render();
-  loadHistory();
 }
 
 function setEmotion(name, val) {
@@ -893,6 +1064,21 @@ async function loadHistory() {
     const data = await resp.json();
     if (data && data.rows) {
       state.history = data.rows;
+      render();
+    }
+  } catch (err) {
+    console.log('Could not load history:', err.message);
+  }
+}
+
+async function loadAllHistory() {
+  if (!state.scriptUrl) return;
+  try {
+    const url = `${state.scriptUrl}?action=history&client=${encodeURIComponent(CONFIG.CLIENT_NAME)}`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+    if (data && data.rows) {
+      state.allHistory = data.rows;
       render();
     }
   } catch (err) {
