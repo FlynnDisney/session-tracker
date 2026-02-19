@@ -548,7 +548,7 @@ const CONFIG = {
       bounces: {
         letter: 'A',
         name: 'Bounces',
-        rx: '10–15 min · ~100–150 ground contacts',
+        rx: 'Focus on staying relaxed, light and low effort · 10–15 min · ~100–150 ground contacts',
         variants: ['Free Skips', 'Line Jumps', 'Crossed-Extensor Hops'],
         track: [
           { id: 'fa_bounce_mins', label: 'Duration', unit: 'min' },
@@ -568,19 +568,20 @@ const CONFIG = {
         {
           letter: 'C',
           name: 'Garhammer Raise on Incline Bench',
-          rx: '1 set · 8+ reps to failure · 2–3 min rest',
+          rx: '1 set · 8+ reps to failure · 2–3 min rest · 2.5–10 kg between knees',
           track: [
+            { id: 'fa_ghr_load', label: 'Load', unit: 'kg' },
             { id: 'fa_ghr_reps', label: 'Reps', unit: '' },
           ],
         },
         {
           letter: 'D1',
-          name: 'Zercher Squats, Heels Elevated',
-          rx: '1 set · 8–10 reps · 3 min rest · 50–60 kg',
+          name: 'Zercher Backward Lunge',
+          rx: '1 set · 8–10 reps · 2 min rest between sides · 50–60 kg',
           badge: 'Superset',
           track: [
-            { id: 'fa_zsq_load', label: 'Load', unit: 'kg' },
-            { id: 'fa_zsq_reps', label: 'Reps', unit: '' },
+            { id: 'fa_zbl_load', label: 'Load', unit: 'kg' },
+            { id: 'fa_zbl_reps', label: 'Reps', unit: '' },
           ],
         },
         {
@@ -594,22 +595,22 @@ const CONFIG = {
         },
         {
           letter: 'E1',
-          name: 'Zercher Romanian Deadlift',
-          rx: '1 set · 8–10 reps · 3 min rest · 50–60 kg',
+          name: 'Ring Hamstring Curls',
+          rx: '1 set · 8–10 reps · 1.5 min rest per side · 40–50 kg',
           badge: 'Superset',
           track: [
-            { id: 'fa_zrdl_load', label: 'Load', unit: 'kg' },
-            { id: 'fa_zrdl_reps', label: 'Reps', unit: '' },
+            { id: 'fa_rhc_load', label: 'Load', unit: 'kg' },
+            { id: 'fa_rhc_reps', label: 'Reps', unit: '' },
           ],
         },
         {
           letter: 'E2',
-          name: 'Ring Push Up',
-          rx: '1 set · 8–10 reps · 3 min rest · 0–15 kg',
+          name: 'Bench Press',
+          rx: '1 set · 8–10 reps · 3 min rest · 40–60 kg · test wide or narrow grip',
           badge: 'Superset',
           track: [
-            { id: 'fa_rpu_load', label: 'Load', unit: 'kg' },
-            { id: 'fa_rpu_reps', label: 'Reps', unit: '' },
+            { id: 'fa_bp_load', label: 'Load', unit: 'kg' },
+            { id: 'fa_bp_reps', label: 'Reps', unit: '' },
           ],
         },
       ],
@@ -643,9 +644,9 @@ const CONFIG = {
           ],
         },
         {
-          letter: 'D1',
-          name: 'Zercher Squats, Heels Elevated (2 plates)',
-          rx: '2 sets · 6–8 reps · 3 min rest · 55–65 kg',
+          letter: 'B1',
+          name: 'Zercher Squats, Heels Elevated',
+          rx: '1–2 sets · 6–8 reps · 3 min rest · 55–65 kg',
           badge: 'Superset',
           track: [
             { id: 'fb_zsq_load_s1', label: 'S1 load', unit: 'kg' },
@@ -655,9 +656,9 @@ const CONFIG = {
           ],
         },
         {
-          letter: 'D2',
-          name: 'Assisted Chin Ups',
-          rx: '2 sets · 6–8 reps · 3 min rest',
+          letter: 'B2',
+          name: 'Assisted Chin Ups, Feet Elevated Eccentric',
+          rx: '1–2 sets · 6–8 reps · 3 min rest',
           badge: 'Superset',
           track: [
             { id: 'fb_acu_reps_s1', label: 'S1 reps', unit: '' },
@@ -665,27 +666,27 @@ const CONFIG = {
           ],
         },
         {
-          letter: 'E1',
-          name: 'Zercher Romanian Deadlift',
-          rx: '1–2 sets · 6–8 reps · 3 min rest · 55–65 kg',
+          letter: 'C1',
+          name: 'Jefferson Curls',
+          rx: '1–2 sets · 4–8 reps · 3 min rest · 10–20 kg',
           badge: 'Superset',
           track: [
-            { id: 'fb_zrdl_load_s1', label: 'S1 load', unit: 'kg' },
-            { id: 'fb_zrdl_reps_s1', label: 'S1 reps', unit: '' },
-            { id: 'fb_zrdl_load_s2', label: 'S2 load', unit: 'kg' },
-            { id: 'fb_zrdl_reps_s2', label: 'S2 reps', unit: '' },
+            { id: 'fb_jc_load_s1', label: 'S1 load', unit: 'kg' },
+            { id: 'fb_jc_reps_s1', label: 'S1 reps', unit: '' },
+            { id: 'fb_jc_load_s2', label: 'S2 load', unit: 'kg' },
+            { id: 'fb_jc_reps_s2', label: 'S2 reps', unit: '' },
           ],
         },
         {
-          letter: 'E2',
-          name: 'Ring Push Up',
-          rx: '1–2 sets · 8–6–8 reps · 3 min rest · 5–15 kg',
+          letter: 'C2',
+          name: 'Bench Press',
+          rx: '1–2 sets · 6–8 reps · 3 min rest · 40–50 kg',
           badge: 'Superset',
           track: [
-            { id: 'fb_rpu_load_s1', label: 'S1 load', unit: 'kg' },
-            { id: 'fb_rpu_reps_s1', label: 'S1 reps', unit: '' },
-            { id: 'fb_rpu_load_s2', label: 'S2 load', unit: 'kg' },
-            { id: 'fb_rpu_reps_s2', label: 'S2 reps', unit: '' },
+            { id: 'fb_bp_load_s1', label: 'S1 load', unit: 'kg' },
+            { id: 'fb_bp_reps_s1', label: 'S1 reps', unit: '' },
+            { id: 'fb_bp_load_s2', label: 'S2 load', unit: 'kg' },
+            { id: 'fb_bp_reps_s2', label: 'S2 reps', unit: '' },
           ],
         },
       ],
@@ -769,7 +770,7 @@ function renderDiaryEntry(entry) {
 
   // Emotions
   const emotionChips = CONFIG.EMOTIONS
-    .filter(e => entry.emotions && entry.emotions[e.name] && entry.emotions[e.name] !== '')
+    .filter(e => entry.emotions && entry.emotions[e.name] !== undefined && entry.emotions[e.name] !== '')
     .map(e => `<span class="diary-emotion-chip">${e.name} ${entry.emotions[e.name]}/5</span>`)
     .join('');
 
