@@ -773,7 +773,7 @@ function renderDiaryEntry(entry) {
   if (exerciseNames.length === 0 && !entry.notes) return '';
 
   const emotionChips = CONFIG.EMOTIONS
-    .filter(e => entry.emotions && entry.emotions[e.name] && entry.emotions[e.name] !== '')
+    .filter(e => entry.emotions && entry.emotions[e.name] !== undefined && entry.emotions[e.name] !== '')
     .map(e => `<span class="diary-emotion-chip">${e.name} ${entry.emotions[e.name]}/5</span>`)
     .join('');
 
