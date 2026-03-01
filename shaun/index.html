@@ -769,9 +769,17 @@ function renderDiaryEntry(entry) {
   if (exerciseNames.length === 0 && !entry.notes) return '';
 
   // Emotions
+  const EMOTION_CUTOVER = new Date('2026-03-01');
+  const entryDate = new Date(entry.date);
+  const scaleOld = entryDate < EMOTION_CUTOVER;
+
   const emotionChips = CONFIG.EMOTIONS
     .filter(e => entry.emotions && entry.emotions[e.name] !== undefined && entry.emotions[e.name] !== '')
-    .map(e => `<span class="diary-emotion-chip">${e.name} ${entry.emotions[e.name]}/5</span>`)
+    .map(e => {
+      let val = Number(entry.emotions[e.name]);
+      if (scaleOld && val >= 1 && val <= 5) val = val * 2;
+      return `<span class="diary-emotion-chip">${e.name} ${val}/10</span>`;
+    })
     .join('');
 
   return `
@@ -812,7 +820,7 @@ const TABS = [...CONFIG.SESSIONS, 'Diary'];
 const state = {
   scriptUrl: CONFIG.SCRIPT_URL,
   activeTab: 0,
-  emotions: CONFIG.EMOTIONS.reduce((o, e) => ({ ...o, [e.name]: 3 }), {}),
+  emotions: CONFIG.EMOTIONS.reduce((o, e) => ({ ...o, [e.name]: 5 }), {}),
   tracking: {},
   notes: '',
   history: [],
@@ -946,7 +954,7 @@ function renderSessionForm(prog) {
             <span class="metric-desc">${e.desc}</span>
           </div>
           <div class="slider-wrap">
-            <input type="range" min="1" max="5" step="1" value="${state.emotions[e.name]}"
+            <input type="range" min="1" max="10" step="1" value="${state.emotions[e.name]}"
                    class="emotion-slider"
                    oninput="setEmotion('${e.name}', this.value)" />
           </div>
@@ -1045,7 +1053,7 @@ async function submitSession() {
       body: JSON.stringify(payload),
     });
     showStatus('Session logged ✓', 'success');
-    state.emotions = CONFIG.EMOTIONS.reduce((o, e) => ({ ...o, [e.name]: 3 }), {});
+    state.emotions = CONFIG.EMOTIONS.reduce((o, e) => ({ ...o, [e.name]: 5 }), {});
     state.tracking = {};
     state.notes = '';
     setTimeout(() => loadHistory(), 2000);
@@ -1132,11 +1140,18 @@ function drawChart() {
   const n = rows.length;
 
   if (state.graphMode === 'emotions') {
+    const EMOTION_CUTOVER = new Date('2026-03-01');
     CONFIG.EMOTIONS.forEach((emo, ei) => {
-      const values = rows.map(r => r.emotions ? (r.emotions[emo.name] || 3) : 3);
-      drawLine(ctx, values, n, PAD, plotW, plotH, 1, 5, PALETTE[ei % PALETTE.length]);
+      const values = rows.map(r => {
+        let v = r.emotions ? (r.emotions[emo.name] || 5) : 5;
+        v = Number(v);
+        const d = new Date(r.date);
+        if (d < EMOTION_CUTOVER && v >= 1 && v <= 5) v = v * 2;
+        return v;
+      });
+      drawLine(ctx, values, n, PAD, plotW, plotH, 1, 10, PALETTE[ei % PALETTE.length]);
     });
-    drawAxes(ctx, rows, PAD, plotW, plotH, 1, 5, W, H);
+    drawAxes(ctx, rows, PAD, plotW, plotH, 1, 10, W, H);
   } else {
     const loadMetrics = getLoadMetrics(CONFIG.SESSIONS[state.activeTab]);
     let allVals = [];
