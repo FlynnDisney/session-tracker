@@ -554,6 +554,14 @@ const CONFIG = {
           { id: 'fa_sbj_jumps', label: 'Box Jumps', unit: 'jumps' },
           { id: 'fa_ceh_reps', label: 'X-Ext Hops', unit: '/leg' },
         ],
+        progression: [
+          '4×3 jumps · 4×15/leg hops — establish height & rhythm',
+          '4×4 jumps · 4×16/leg hops — +1 jump, +1 hop/leg',
+          '4×5 jumps · 4×17/leg hops — top of range, assess box height',
+          '4×3 jumps (↑ box) · 4×18/leg hops — higher box or reset',
+          '4×4 jumps · 4×19/leg hops — +1 jump at new height',
+          '4×5 jumps · 4×20/leg hops — final session, top of range',
+        ],
       },
       exercises: [
         {
@@ -564,6 +572,14 @@ const CONFIG = {
             { id: 'fa_calf_load', label: 'Load', unit: 'kg' },
             { id: 'fa_calf_reps', label: 'Reps', unit: '' },
           ],
+          progression: [
+            '60 kg · 10+ to failure — baseline',
+            '60 kg · beat last session — +1–2 reps',
+            '62.5 kg if hit 12+ last time, else stay — to failure',
+            'Same load · beat last session — push reps',
+            '+2.5 kg if hit 12+ last time — to failure',
+            'Same load · rep PR — final session',
+          ],
         },
         {
           letter: 'C',
@@ -572,6 +588,14 @@ const CONFIG = {
           track: [
             { id: 'fa_ghr_load', label: 'Load', unit: 'kg' },
             { id: 'fa_ghr_reps', label: 'Reps', unit: '' },
+          ],
+          progression: [
+            '5 kg · 8+ to failure — baseline',
+            '5 kg · beat last session — +1–2 reps',
+            '7.5 kg if hit 12+ last time, else stay — to failure',
+            'Same load · beat last session — push reps',
+            '+2.5 kg if hit 12+ last time — to failure',
+            'Same load · rep PR — final session',
           ],
         },
         {
@@ -583,6 +607,14 @@ const CONFIG = {
             { id: 'fa_zbl_load', label: 'Load', unit: 'kg' },
             { id: 'fa_zbl_reps', label: 'Reps', unit: '/side' },
           ],
+          progression: [
+            '57.5 kg × 6/side — +2.5 kg from baseline, reset to 6',
+            '57.5 kg × 7/side — +1 rep',
+            '57.5 kg × 8/side — +1 rep, top of range',
+            '60 kg × 6/side — +2.5 kg, reset to 6',
+            '60 kg × 7/side — +1 rep',
+            '60 kg × 8/side — +1 rep, top of range',
+          ],
         },
         {
           letter: 'D2',
@@ -591,6 +623,14 @@ const CONFIG = {
           badge: 'Superset',
           track: [
             { id: 'fa_acu_reps', label: 'Reps', unit: '' },
+          ],
+          progression: [
+            '6 reps · slow 3–5 sec eccentric — baseline',
+            '7 reps · same assistance',
+            '8 reps · same assistance',
+            '6 reps · reduce assistance — reset',
+            '7 reps · same assistance',
+            '8 reps · same assistance',
           ],
         },
         {
@@ -602,6 +642,14 @@ const CONFIG = {
             { id: 'fa_rhc2_load', label: 'Load', unit: 'kg' },
             { id: 'fa_rhc2_reps', label: 'Reps', unit: '/side' },
           ],
+          progression: [
+            'BW × 6/side — 2 legs up, 1 leg down. Start at 6',
+            'BW × 7/side — +1 rep',
+            'BW × 8/side — +1 rep',
+            '2.5 kg × 6/side — add light load, reset to 6',
+            '2.5 kg × 7/side — +1 rep',
+            '2.5 kg × 8/side — +1 rep',
+          ],
         },
         {
           letter: 'E2',
@@ -611,6 +659,14 @@ const CONFIG = {
           track: [
             { id: 'fa_bp_load', label: 'Load', unit: 'kg' },
             { id: 'fa_bp_reps', label: 'Reps', unit: '' },
+          ],
+          progression: [
+            '52.5 kg × 6 — +2.5 kg from baseline, reset to 6',
+            '52.5 kg × 7 — +1 rep',
+            '52.5 kg × 8 — +1 rep, top of range',
+            '55 kg × 6 — +2.5 kg, reset to 6',
+            '55 kg × 7 — +1 rep',
+            '55 kg × 8 — +1 rep, top of range',
           ],
         },
       ],
@@ -630,6 +686,14 @@ const CONFIG = {
             { id: 'fb_zhsi_load_s2', label: 'S2 load', unit: 'kg' },
             { id: 'fb_zhsi_sec_s2', label: 'S2 sec', unit: 's' },
           ],
+          progression: [
+            '42.5 kg × 30 sec — +2.5 kg from baseline, reset to 30s',
+            '42.5 kg × 35 sec — +5 sec',
+            '42.5 kg × 40 sec — +5 sec',
+            '42.5 kg × 45 sec — +5 sec, approaching ceiling',
+            '45 kg × 30 sec — +2.5 kg, reset to 30 sec',
+            '45 kg × 35 sec — +5 sec',
+          ],
         },
         {
           letter: 'A2',
@@ -641,6 +705,14 @@ const CONFIG = {
             { id: 'fb_lmdl_reps_s1', label: 'S1 reps', unit: '' },
             { id: 'fb_lmdl_load_s2', label: 'S2 load', unit: 'kg' },
             { id: 'fb_lmdl_reps_s2', label: 'S2 reps', unit: '' },
+          ],
+          progression: [
+            '17.5 kg × 6/side — +2.5 kg from baseline, reset to 6',
+            '17.5 kg × 7/side — +1 rep',
+            '17.5 kg × 8/side — +1 rep, top of range',
+            '20 kg × 6/side — +2.5 kg, reset to 6',
+            '20 kg × 7/side — +1 rep',
+            '20 kg × 8/side — +1 rep, top of range',
           ],
         },
         {
@@ -654,6 +726,14 @@ const CONFIG = {
             { id: 'fb_zsq_load_s2', label: 'S2 load', unit: 'kg' },
             { id: 'fb_zsq_reps_s2', label: 'S2 reps', unit: '' },
           ],
+          progression: [
+            '57.5 kg × 6 — +2.5 kg from baseline, reset to 6',
+            '57.5 kg × 7 — +1 rep',
+            '57.5 kg × 8 — +1 rep, top of range',
+            '60 kg × 6 — +2.5 kg, reset to 6',
+            '60 kg × 7 — +1 rep',
+            '60 kg × 8 — +1 rep, top of range',
+          ],
         },
         {
           letter: 'B2',
@@ -663,6 +743,14 @@ const CONFIG = {
           track: [
             { id: 'fb_acu_reps_s1', label: 'S1 reps', unit: '' },
             { id: 'fb_acu_reps_s2', label: 'S2 reps', unit: '' },
+          ],
+          progression: [
+            '6 reps · slow 3–5 sec eccentric — baseline',
+            '7 reps · same assistance',
+            '8 reps · same assistance',
+            '6 reps · reduce assistance — reset',
+            '7 reps · same assistance',
+            '8 reps · same assistance',
           ],
         },
         {
@@ -676,6 +764,14 @@ const CONFIG = {
             { id: 'fb_jc_load_s2', label: 'S2 load', unit: 'kg' },
             { id: 'fb_jc_reps_s2', label: 'S2 reps', unit: '' },
           ],
+          progression: [
+            '12.5 kg × 6 — +2.5 kg from baseline, reset to 6',
+            '12.5 kg × 7 — +1 rep',
+            '12.5 kg × 8 — +1 rep, top of range',
+            '15 kg × 6 — +2.5 kg, reset to 6',
+            '15 kg × 7 — +1 rep',
+            '15 kg × 8 — +1 rep, top of range',
+          ],
         },
         {
           letter: 'C2',
@@ -687,6 +783,14 @@ const CONFIG = {
             { id: 'fb_bp_reps_s1', label: 'S1 reps', unit: '' },
             { id: 'fb_bp_load_s2', label: 'S2 load', unit: 'kg' },
             { id: 'fb_bp_reps_s2', label: 'S2 reps', unit: '' },
+          ],
+          progression: [
+            '52.5 kg × 6 — +2.5 kg from baseline, reset to 6',
+            '52.5 kg × 7 — +1 rep',
+            '52.5 kg × 8 — +1 rep, top of range',
+            '55 kg × 6 — +2.5 kg, reset to 6',
+            '55 kg × 7 — +1 rep',
+            '55 kg × 8 — +1 rep, top of range',
           ],
         },
       ],
@@ -700,6 +804,27 @@ const CONFIG = {
 
 function currentProgram() {
   return CONFIG.PROGRAMS[CONFIG.SESSIONS[state.activeTab]];
+}
+
+function getSessionCount(sessionName) {
+  // Count how many times this session type appears in history
+  // Only count sessions from March 2026 onward (start of this program)
+  const cutover = new Date('2026-03-01');
+  return state.history.filter(r => {
+    const d = new Date(r.date);
+    return r.session === sessionName && d >= cutover;
+  }).length;
+}
+
+function getProgressionRx(item) {
+  if (!item.progression) return item.rx;
+  const sessionName = CONFIG.SESSIONS[state.activeTab];
+  const count = getSessionCount(sessionName);
+  // count = 0 means next session is #1 (index 0)
+  const idx = Math.min(count, item.progression.length - 1);
+  const sessionLabel = sessionName === 'Full Body A' ? 'A' : 'B';
+  const num = idx + 1;
+  return `<span style="color:var(--accent);font-weight:600;">Session ${sessionLabel}${num}:</span> ${item.progression[idx]}`;
 }
 
 function chunkPairs(arr) {
@@ -888,7 +1013,7 @@ function renderSessionForm(prog) {
             <div class="exercise-letter bounce-letter">${prog.bounces.letter}</div>
             <div class="exercise-info">
               <div class="exercise-name">${prog.bounces.name}</div>
-              <div class="exercise-rx">${prog.bounces.rx}</div>
+              <div class="exercise-rx">${getProgressionRx(prog.bounces)}</div>
             </div>
           </div>
           ${prog.bounces.variants ? `
@@ -924,7 +1049,7 @@ function renderSessionForm(prog) {
                 ${ex.name}
                 ${ex.badge ? `<span class="superset-badge">${ex.badge}</span>` : ''}
               </div>
-              <div class="exercise-rx">${ex.rx}</div>
+              <div class="exercise-rx">${getProgressionRx(ex)}</div>
             </div>
           </div>
           ${chunkPairs(ex.track).map(pair => `
