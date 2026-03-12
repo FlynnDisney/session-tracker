@@ -502,79 +502,63 @@
   .book-call-wrap {
     margin-top: 8px;
   }
-  .book-call-card {
+  .book-call-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 20px 16px;
-    text-align: center;
+    padding: 14px 16px;
+    margin-bottom: 8px;
   }
   .book-call-icon {
-    width: 48px;
-    height: 48px;
-    margin: 0 auto 12px;
+    width: 40px;
+    height: 40px;
     background: var(--accent-glow);
-    border-radius: 14px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
   }
   .book-call-icon svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     color: var(--accent);
   }
   .book-call-title {
     font-family: var(--font-display);
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
-    margin-bottom: 4px;
   }
   .book-call-desc {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-2);
-    margin-bottom: 16px;
-    line-height: 1.5;
+    margin-top: 2px;
   }
-  .book-call-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 700;
-    color: #fff;
-    background: linear-gradient(135deg, var(--accent), #8BA4F0);
-    border: none;
+  .book-call-embed {
+    background: #fff;
+    border: 1px solid var(--border);
     border-radius: var(--radius);
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-    text-decoration: none;
+    overflow: hidden;
+    height: 600px;
   }
-  .book-call-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(108, 142, 239, 0.3); }
-  .book-call-btn:active { transform: scale(0.98); }
-  .book-call-btn svg {
-    width: 16px;
-    height: 16px;
+  .book-call-embed iframe {
+    display: block;
   }
-  .book-call-info {
-    margin-top: 16px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-  }
-  .book-call-info-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  .book-call-fallback {
+    text-align: center;
+    padding: 10px 0 0;
     font-size: 12px;
     color: var(--text-3);
   }
-  .book-call-info-item svg {
-    width: 14px;
-    height: 14px;
-    color: var(--text-3);
+  .book-call-fallback a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .book-call-fallback a:hover {
+    text-decoration: underline;
   }
 
   /* ── Status Bar ── */
@@ -627,6 +611,7 @@ const CONFIG = {
   CLIENT_NAME: 'Shaun Malcolm',
 
   BOOKING_URL: 'https://calendar.app.google/satpuXRvwEJYdUJF9',
+  BOOKING_EMBED: 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ2UZIgMVBJS0lf-LRu7EBXFxK5NuQgM_wx0JH3kRxzkyCkXgZ4tVF0xlHORZJh1ExBnBu6fj5vD?gv=true',
 
   SESSIONS: ['Full Body A', 'Full Body B'],
 
@@ -1097,36 +1082,22 @@ function render() {
 function renderBookCallView() {
   return `
     <div class="book-call-wrap">
-      <div class="book-call-card">
+      <div class="book-call-header">
         <div class="book-call-icon">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
           </svg>
         </div>
-        <div class="book-call-title">Weekly Check-in</div>
-        <div class="book-call-desc">
-          Book a 15-minute call to review your progress, adjust programming, and ask questions.
+        <div>
+          <div class="book-call-title">Weekly Check-in</div>
+          <div class="book-call-desc">15 min · Review progress, adjust programming, ask questions</div>
         </div>
-        <a href="${CONFIG.BOOKING_URL}" target="_blank" rel="noopener" class="book-call-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-          </svg>
-          Book a Time
-        </a>
-        <div class="book-call-info">
-          <span class="book-call-info-item">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-            15 minutes
-          </span>
-          <span class="book-call-info-item">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
-            </svg>
-            Google Meet
-          </span>
-        </div>
+      </div>
+      <div class="book-call-embed">
+        <iframe src="${CONFIG.BOOKING_EMBED}" style="border:0; width:100%; height:100%; border-radius: var(--radius-sm);" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="book-call-fallback">
+        Having trouble? <a href="${CONFIG.BOOKING_URL}" target="_blank" rel="noopener">Open booking page</a>
       </div>
     </div>
   `;
