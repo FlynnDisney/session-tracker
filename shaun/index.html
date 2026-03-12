@@ -103,6 +103,19 @@
     color: var(--bg);
     border-color: var(--text);
   }
+  .tab.book-tab {
+    border-color: rgba(108, 142, 239, 0.3);
+    color: var(--accent);
+  }
+  .tab.book-tab:hover {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+  }
+  .tab.book-tab.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
 
   /* ── Section Labels ── */
   .section-label {
@@ -485,6 +498,85 @@
     padding: 24px 0;
   }
 
+  /* ── Book Call ── */
+  .book-call-wrap {
+    margin-top: 8px;
+  }
+  .book-call-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    text-align: center;
+  }
+  .book-call-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 12px;
+    background: var(--accent-glow);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .book-call-icon svg {
+    width: 24px;
+    height: 24px;
+    color: var(--accent);
+  }
+  .book-call-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .book-call-desc {
+    font-size: 13px;
+    color: var(--text-2);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .book-call-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), #8BA4F0);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    text-decoration: none;
+  }
+  .book-call-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(108, 142, 239, 0.3); }
+  .book-call-btn:active { transform: scale(0.98); }
+  .book-call-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+  .book-call-info {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  .book-call-info-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-3);
+  }
+  .book-call-info-item svg {
+    width: 14px;
+    height: 14px;
+    color: var(--text-3);
+  }
+
   /* ── Status Bar ── */
   .status-bar {
     position: fixed;
@@ -533,6 +625,8 @@ const CONFIG = {
   SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwF3fDaNPB6nm9erj5FOHV3tgK1PklRzeqBVPgimmM5YMNSioYCM9p2dPf3Jw8C5fDc3A/exec',
 
   CLIENT_NAME: 'Shaun Malcolm',
+
+  BOOKING_URL: 'https://calendar.app.google/satpuXRvwEJYdUJF9',
 
   SESSIONS: ['Full Body A', 'Full Body B'],
 
@@ -807,8 +901,6 @@ function currentProgram() {
 }
 
 function getSessionCount(sessionName) {
-  // Count how many times this session type appears in history
-  // Only count sessions from March 2026 onward (start of this program)
   const cutover = new Date('2026-03-01');
   return state.history.filter(r => {
     const d = new Date(r.date);
@@ -820,7 +912,6 @@ function getProgressionRx(item) {
   if (!item.progression) return item.rx;
   const sessionName = CONFIG.SESSIONS[state.activeTab];
   const count = getSessionCount(sessionName);
-  // count = 0 means next session is #1 (index 0)
   const idx = Math.min(count, item.progression.length - 1);
   const sessionLabel = sessionName === 'Full Body A' ? 'A' : 'B';
   const num = idx + 1;
@@ -846,13 +937,11 @@ function allTrackIds() {
 function getFieldLabel(fieldId, sessionName) {
   const prog = CONFIG.PROGRAMS[sessionName];
   if (!prog) return null;
-  // Check bounces
   if (prog.bounces) {
     for (const t of prog.bounces.track) {
       if (t.id === fieldId) return { exercise: prog.bounces.name, label: t.label, unit: t.unit };
     }
   }
-  // Check exercises
   for (const ex of prog.exercises) {
     for (const t of ex.track) {
       if (t.id === fieldId) return { exercise: ex.name, label: t.label, unit: t.unit };
@@ -871,7 +960,6 @@ function renderDiaryEntry(entry) {
     catch { return d; }
   };
 
-  // Group strength data by exercise
   const exerciseData = {};
   const allExercises = [];
   if (prog.bounces) allExercises.push({ name: prog.bounces.name, fields: prog.bounces.track });
@@ -893,7 +981,6 @@ function renderDiaryEntry(entry) {
   const exerciseNames = Object.keys(exerciseData);
   if (exerciseNames.length === 0 && !entry.notes) return '';
 
-  // Emotions
   const EMOTION_CUTOVER = new Date('2026-03-01');
   const entryDate = new Date(entry.date);
   const scaleOld = entryDate < EMOTION_CUTOVER;
@@ -940,7 +1027,7 @@ function getLoadMetrics(sessionName) {
 // STATE
 // ════════════════════════════════════════════════════════════════
 
-const TABS = [...CONFIG.SESSIONS, 'Diary'];
+const TABS = [...CONFIG.SESSIONS, 'Diary', 'Book Call'];
 
 const state = {
   scriptUrl: CONFIG.SCRIPT_URL,
@@ -963,10 +1050,19 @@ function isDiary() {
   return TABS[state.activeTab] === 'Diary';
 }
 
+function isBookCall() {
+  return TABS[state.activeTab] === 'Book Call';
+}
+
+function isSessionTab() {
+  return !isDiary() && !isBookCall();
+}
+
 function render() {
   const app = document.getElementById('app');
   const diary = isDiary();
-  const prog = diary ? null : currentProgram();
+  const bookCall = isBookCall();
+  const prog = isSessionTab() ? currentProgram() : null;
 
   app.innerHTML = `
     <div class="header">
@@ -976,12 +1072,12 @@ function render() {
 
     <div class="tabs" role="tablist">
       ${TABS.map((s, i) => `
-        <button class="tab ${i === state.activeTab ? 'active' : ''}" 
-                onclick="setTab(${i})" role="tab">${s}</button>
+        <button class="tab ${i === state.activeTab ? 'active' : ''} ${s === 'Book Call' ? 'book-tab' : ''}" 
+                onclick="setTab(${i})" role="tab">${s === 'Book Call' ? '📞 ' + s : s}</button>
       `).join('')}
     </div>
 
-    ${diary ? renderDiaryView() : renderSessionForm(prog)}
+    ${bookCall ? renderBookCallView() : diary ? renderDiaryView() : renderSessionForm(prog)}
 
     ${state.isAdmin ? `
       <div class="section-label" style="color: var(--text-3); margin-top: 12px;">Admin</div>
@@ -992,10 +1088,48 @@ function render() {
     ` : ''}
   `;
 
-  if (!diary && state.history.length >= 2) {
+  if (isSessionTab() && state.history.length >= 2) {
     requestAnimationFrame(drawChart);
   }
-  if (!diary) renderLegend();
+  if (isSessionTab()) renderLegend();
+}
+
+function renderBookCallView() {
+  return `
+    <div class="book-call-wrap">
+      <div class="book-call-card">
+        <div class="book-call-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+          </svg>
+        </div>
+        <div class="book-call-title">Weekly Check-in</div>
+        <div class="book-call-desc">
+          Book a 15-minute call to review your progress, adjust programming, and ask questions.
+        </div>
+        <a href="${CONFIG.BOOKING_URL}" target="_blank" rel="noopener" class="book-call-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+          </svg>
+          Book a Time
+        </a>
+        <div class="book-call-info">
+          <span class="book-call-info-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            15 minutes
+          </span>
+          <span class="book-call-info-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
+            </svg>
+            Google Meet
+          </span>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 function renderSessionForm(prog) {
@@ -1134,7 +1268,7 @@ function setTab(i) {
   state.tracking = {};
   if (isDiary()) {
     loadAllHistory();
-  } else {
+  } else if (isSessionTab()) {
     loadHistory();
   }
   render();
@@ -1208,7 +1342,6 @@ async function loadHistory() {
 async function loadAllHistory() {
   if (!state.scriptUrl) return;
   try {
-    // Load all sessions without session filter
     const url = `${state.scriptUrl}?action=history&client=${encodeURIComponent(CONFIG.CLIENT_NAME)}`;
     const resp = await fetch(url);
     const data = await resp.json();
