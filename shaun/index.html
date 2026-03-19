@@ -893,10 +893,27 @@ function getSessionCount(sessionName) {
   }).length;
 }
 
+// Count how many past sessions (post-cutover) have actual data for this
+// exercise's tracked fields. An exercise counts as "done" if at least one
+// of its track fields has a non-empty value in that session row.
+function getExerciseCount(item) {
+  const cutover = new Date('2026-03-01');
+  const fieldIds = item.track.map(t => t.id);
+  return state.history.filter(r => {
+    const d = new Date(r.date);
+    if (d < cutover) return false;
+    if (!r.strength) return false;
+    return fieldIds.some(id => {
+      const v = r.strength[id];
+      return v !== undefined && v !== null && v !== '';
+    });
+  }).length;
+}
+
 function getProgressionRx(item) {
   if (!item.progression) return item.rx;
   const sessionName = CONFIG.SESSIONS[state.activeTab];
-  const count = getSessionCount(sessionName);
+  const count = getExerciseCount(item);
   const idx = Math.min(count, item.progression.length - 1);
   const sessionLabel = sessionName === 'Full Body A' ? 'A' : 'B';
   const num = idx + 1;
@@ -1073,10 +1090,16 @@ function render() {
     ` : ''}
   `;
 
-  if (isSessionTab() && state.history.length >= 2) {
-    requestAnimationFrame(drawChart);
+  // FIX: Schedule chart drawing after DOM is fully laid out
+  if (isSessionTab()) {
+    renderLegend();
+    if (state.history.length >= 2) {
+      // Use double-rAF to ensure the canvas element has been laid out with correct dimensions
+      requestAnimationFrame(() => {
+        requestAnimationFrame(drawChart);
+      });
+    }
   }
-  if (isSessionTab()) renderLegend();
 }
 
 function renderBookCallView() {
@@ -1286,7 +1309,31 @@ async function submitSession() {
     state.emotions = CONFIG.EMOTIONS.reduce((o, e) => ({ ...o, [e.name]: 5 }), {});
     state.tracking = {};
     state.notes = '';
-    setTimeout(() => loadHistory(), 2000);
+
+    // FIX: Retry-polling to catch new data from Google Apps Script
+    // GAS can take 3–8 seconds to process. We poll up to 5 times with
+    // increasing delays, stopping as soon as we see new data.
+    const prevCount = state.history.length;
+    const delays = [3000, 5000, 7000, 10000, 15000];
+    for (let attempt = 0; attempt < delays.length; attempt++) {
+      await new Promise(resolve => setTimeout(resolve, delays[attempt]));
+      try {
+        const url = `${state.scriptUrl}?action=history&client=${encodeURIComponent(CONFIG.CLIENT_NAME)}&session=${encodeURIComponent(CONFIG.SESSIONS[state.activeTab])}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        if (data && data.rows) {
+          state.history = data.rows;
+          render();
+          // If we got more rows than before, the new entry landed
+          if (data.rows.length > prevCount) {
+            console.log(`New data found on attempt ${attempt + 1}`);
+            break;
+          }
+        }
+      } catch (err) {
+        console.log(`History poll attempt ${attempt + 1} failed:`, err.message);
+      }
+    }
   } catch (err) {
     showStatus('Error saving — check your connection', 'error');
     console.error(err);
@@ -1355,11 +1402,22 @@ function drawChart() {
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.parentElement.getBoundingClientRect();
+
+  // FIX: Guard against zero-sized canvas (element not yet laid out)
+  if (rect.width === 0 || rect.height === 0) {
+    // Retry on next frame
+    requestAnimationFrame(drawChart);
+    return;
+  }
+
   canvas.width = rect.width * dpr;
   canvas.height = rect.height * dpr;
   canvas.style.width = rect.width + 'px';
   canvas.style.height = rect.height + 'px';
   ctx.scale(dpr, dpr);
+
+  // FIX: Clear canvas before redrawing so old data doesn't persist
+  ctx.clearRect(0, 0, rect.width, rect.height);
 
   const W = rect.width, H = rect.height;
   const PAD = { top: 12, right: 12, bottom: 28, left: 32 };
