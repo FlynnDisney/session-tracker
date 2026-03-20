@@ -3,176 +3,456 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ricardo Morais — Session Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<title>Attractor Basins</title>
+<link href="https://fonts.googleapis.com/css2?family=Livvic:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0F1117;
-    --surface: #181A22;
-    --surface-2: #1E2029;
-    --surface-3: #262833;
-    --border: #2A2D3A;
-    --text: #E8E9ED;
-    --text-2: #9498A8;
-    --text-3: #5D6175;
-    --accent: #6C8EEF;
-    --accent-glow: rgba(108, 142, 239, 0.15);
-    --emotion: #E8845C;
-    --emotion-glow: rgba(232, 132, 92, 0.12);
-    --strength: #5CCFB5;
-    --strength-glow: rgba(92, 207, 181, 0.12);
-    --bounce: #C9A0FF;
-    --bounce-glow: rgba(201, 160, 255, 0.12);
-    --danger: #EF6C6C;
-    --radius: 12px;
-    --radius-sm: 8px;
-    --font-display: 'Fraunces', serif;
-    --font-body: 'DM Sans', sans-serif;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
-  .app { max-width: 520px; margin: 0 auto; padding: 0 16px 100px; opacity: 0; animation: fadeUp 0.5s ease forwards; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  .header { padding: 24px 0 8px; display: flex; align-items: center; justify-content: space-between; }
-  .header h1 { font-family: var(--font-display); font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
-  .client-badge { font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-glow); padding: 4px 10px; border-radius: 20px; letter-spacing: 0.02em; }
-  .tabs { display: flex; gap: 6px; padding: 12px 0; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text-2); transition: all 0.2s ease; }
-  .tab:hover { border-color: var(--text-3); color: var(--text); }
-  .tab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); padding: 20px 0 8px; }
-  .section-label.emotion { color: var(--emotion); }
-  .section-label.strength { color: var(--strength); }
-  .section-label.bounce { color: var(--bounce); }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 8px; }
-  .exercise-block { margin-bottom: 4px; }
-  .exercise-block:last-child { margin-bottom: 0; }
-  .exercise-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
-  .exercise-letter { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--strength); background: var(--strength-glow); width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-  .exercise-letter.bounce-letter { color: var(--bounce); background: var(--bounce-glow); }
-  .exercise-info { flex: 1; }
-  .exercise-name { font-size: 14px; font-weight: 600; line-height: 1.3; }
-  .exercise-rx { font-size: 12px; color: var(--text-3); margin-top: 2px; line-height: 1.4; }
-  .exercise-variants { margin: 6px 0 4px 36px; list-style: none; }
-  .exercise-variants li { font-size: 12px; color: var(--text-2); padding: 2px 0; position: relative; padding-left: 12px; }
-  .exercise-variants li::before { content: '·'; position: absolute; left: 0; color: var(--text-3); font-weight: 700; }
-  .input-row { display: flex; align-items: center; gap: 10px; margin-left: 36px; margin-top: 6px; }
-  .input-row + .input-row { margin-top: 4px; }
-  .input-group { display: flex; align-items: center; gap: 4px; flex: 1; }
-  .input-label { font-size: 11px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
-  .num-field { width: 56px; padding: 6px 6px; text-align: center; font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--strength); background: var(--surface-3); border: 1px solid var(--border); border-radius: var(--radius-sm); outline: none; transition: border-color 0.2s; }
-  .num-field:focus { border-color: var(--strength); }
-  .num-field.bounce-field { color: var(--bounce); }
-  .num-field.bounce-field:focus { border-color: var(--bounce); }
-  .input-unit { font-size: 11px; color: var(--text-3); }
-  .superset-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); background: var(--accent-glow); padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; }
-  .card-divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
-  .metric-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
-  .metric-row + .metric-row { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 6px; }
-  .metric-name { font-size: 14px; font-weight: 500; flex: 1; }
-  .metric-name-wrap { flex: 1; display: flex; flex-direction: column; gap: 1px; }
-  .metric-name-wrap .metric-name { flex: none; }
-  .metric-desc { font-size: 11px; color: var(--text-3); line-height: 1.3; }
-  .metric-value { font-family: var(--font-display); font-size: 18px; font-weight: 700; width: 28px; text-align: right; margin-left: 12px; }
-  .metric-value.emotion-val { color: var(--emotion); }
-  .slider-wrap { flex: 1.2; margin: 0 12px; }
-  input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: var(--surface-3); outline: none; cursor: pointer; }
-  input[type="range"].emotion-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--emotion); box-shadow: 0 0 8px rgba(232, 132, 92, 0.4); cursor: grab; }
-  input[type="range"].emotion-slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--emotion); border: none; box-shadow: 0 0 8px rgba(232, 132, 92, 0.4); cursor: grab; }
-  .notes-field { width: 100%; min-height: 60px; padding: 12px; font-family: var(--font-body); font-size: 14px; color: var(--text); background: var(--surface-3); border: 1px solid var(--border); border-radius: var(--radius-sm); outline: none; resize: vertical; transition: border-color 0.2s; }
-  .notes-field:focus { border-color: var(--accent); }
-  .notes-field::placeholder { color: var(--text-3); }
-  .submit-btn { width: 100%; padding: 14px; margin-top: 16px; font-family: var(--font-body); font-size: 15px; font-weight: 700; color: var(--bg); background: linear-gradient(135deg, var(--accent), #8BA4F0); border: none; border-radius: var(--radius); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
-  .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(108, 142, 239, 0.3); }
-  .submit-btn:active { transform: scale(0.98); }
-  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
-  .graph-container { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-top: 4px; }
-  .graph-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .graph-title { font-size: 14px; font-weight: 600; }
-  .graph-legend { display: flex; gap: 12px; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-2); }
-  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .graph-canvas-wrap { position: relative; height: 180px; }
-  canvas { width: 100% !important; height: 100% !important; }
-  .graph-toggle { display: flex; gap: 4px; background: var(--surface-3); border-radius: 16px; padding: 2px; }
-  .graph-toggle button { font-family: var(--font-body); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 14px; border: none; cursor: pointer; background: transparent; color: var(--text-3); transition: all 0.2s; }
-  .graph-toggle button.active { background: var(--text); color: var(--bg); }
-  .empty-graph { display: flex; align-items: center; justify-content: center; height: 180px; color: var(--text-3); font-size: 13px; }
-  .date-field { padding: 8px 12px; font-family: var(--font-body); font-size: 14px; color: var(--text); background: var(--surface-3); border: 1px solid var(--border); border-radius: var(--radius-sm); outline: none; color-scheme: dark; }
-  .date-field:focus { border-color: var(--accent); }
-  .diary-entry { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; }
-  .diary-date { font-family: var(--font-display); font-size: 14px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-  .diary-session-badge { font-size: 11px; font-weight: 600; color: var(--accent); background: var(--accent-glow); padding: 2px 8px; border-radius: 12px; }
-  .diary-exercise { display: flex; align-items: baseline; gap: 8px; padding: 4px 0; font-size: 13px; }
-  .diary-exercise + .diary-exercise { border-top: 1px solid var(--border); padding-top: 6px; margin-top: 2px; }
-  .diary-ex-name { color: var(--text-2); flex: 1; }
-  .diary-ex-data { color: var(--text); font-family: var(--font-display); font-weight: 600; font-size: 13px; text-align: right; white-space: nowrap; }
-  .diary-emotions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
-  .diary-emotion-chip { font-size: 11px; color: var(--emotion); background: var(--emotion-glow); padding: 2px 8px; border-radius: 10px; font-weight: 600; }
-  .diary-notes { font-size: 12px; color: var(--text-3); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-style: italic; line-height: 1.4; }
-  .diary-empty { text-align: center; color: var(--text-3); font-size: 13px; padding: 24px 0; }
-  .status-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px; text-align: center; font-size: 13px; font-weight: 600; transform: translateY(100%); transition: transform 0.3s ease; z-index: 100; }
-  .status-bar.show { transform: translateY(0); }
-  .status-bar.success { background: #1a3a2a; color: #5CCFB5; }
-  .status-bar.error { background: #3a1a1a; color: #EF6C6C; }
-  .status-bar.loading { background: #1a2a3a; color: var(--accent); }
-  .admin-toggle { font-size: 11px; padding: 4px 8px; border-radius: 12px; border: 1px solid var(--border); background: transparent; color: var(--text-3); cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
-  .admin-toggle:hover { border-color: var(--text-3); }
-  .admin-toggle.active { background: var(--accent-glow); color: var(--accent); border-color: var(--accent); }
+:root{--bg:#0c0f14;--surface:rgba(21,25,32,0.92);--border:rgba(255,255,255,0.08);--text:#e8e6e1;--text2:#8a8880;--text3:#5a5850;--accent:#c8a96e;--accent2:#a08550;--success:#4ade80;--fail:#f87171}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Livvic',sans-serif;overflow:hidden;height:100vh}
+#landscape{position:absolute;inset:0;z-index:0;cursor:grab}
+#landscape:active{cursor:grabbing}
+
+.side{position:fixed;right:0;top:0;bottom:0;width:280px;z-index:10;display:flex;flex-direction:column;pointer-events:none;background:linear-gradient(to left,rgba(12,15,20,0.92) 70%,transparent);padding:16px 16px 16px 24px}
+.side>*{pointer-events:auto}
+
+.s-header{margin-bottom:12px}
+.s-title{font-family:'Livvic',sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.3px}
+.s-pips{display:flex;gap:4px;margin-top:6px}
+.pip{width:20px;height:3px;border-radius:2px;background:rgba(255,255,255,0.1);transition:all 0.4s}
+.pip.done{background:var(--accent)}.pip.cur{background:var(--accent);box-shadow:0 0 6px rgba(200,169,110,0.5)}
+
+.s-target{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:12px;position:relative;overflow:hidden}
+.s-target::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--tc,var(--accent));opacity:0.6}
+.s-target .lv{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:3px}
+.s-target .em{font-family:'Livvic',sans-serif;font-weight:700;font-size:22px}
+.s-target .ht{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.5}
+.s-target .tr{font-size:11px;color:var(--text2);margin-top:4px}
+.s-target .ar{color:var(--accent);margin:0 4px}
+
+.s-readout{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.ro-em{font-family:'Livvic',sans-serif;font-weight:700;font-size:16px;transition:color 0.3s}
+.ro-w{font-size:10px;color:var(--text2);font-style:italic;margin-top:2px}
+.ring{width:34px;height:34px;border-radius:50%;border:3px solid var(--text3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text2);transition:all 0.3s;flex-shrink:0}
+.ring.hot{border-color:var(--success);color:var(--success)}.ring.warm{border-color:var(--accent);color:var(--accent)}
+
+.s-sliders{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.sg{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 12px}
+.sg-t{display:flex;justify-content:space-between;margin-bottom:4px}
+.sg-n{font-size:11px;font-weight:500}.sg-v{font-size:10px;color:var(--accent);font-weight:500}
+.sg input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:3px;background:rgba(255,255,255,0.08);outline:none;cursor:pointer}
+.sg input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);box-shadow:0 0 0 1px rgba(200,169,110,0.3);cursor:grab}
+.sg input[type="range"]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:grab}
+.sg-lb{display:flex;justify-content:space-between;margin-top:2px}.sg-lb span{font-size:8px;color:var(--text3)}
+
+.s-btns{display:flex;gap:8px}
+.btn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Livvic',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.2s;text-align:center}
+.btn:hover{background:rgba(255,255,255,0.06)}.btn.pri{background:var(--accent);color:var(--bg);border-color:var(--accent)}.btn.pri:hover{background:var(--accent2)}
+.spacer{flex:1}
+
+.drag-hint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--text3);letter-spacing:0.5px;opacity:0.5;z-index:5;pointer-events:none}
+
+.ov{display:none;position:fixed;inset:0;z-index:100;background:rgba(12,15,20,0.8);backdrop-filter:blur(10px);justify-content:center;align-items:center}
+.ov.show{display:flex}
+.ovc{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:32px 28px;text-align:center;max-width:480px;width:92%;animation:pop 0.3s ease-out;backdrop-filter:blur(12px)}
+@keyframes pop{from{transform:scale(0.92);opacity:0}to{transform:scale(1);opacity:1}}
+.ovi{width:48px;height:48px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.ovi.w{background:rgba(74,222,128,0.12);color:var(--success)}.ovi.l{background:rgba(248,113,113,0.12);color:var(--fail)}
+.ovt{font-family:'Livvic',sans-serif;font-weight:700;font-size:22px;margin-bottom:6px}
+.ovp{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:18px}
+.ovb{padding:10px 26px;border-radius:10px;border:none;background:var(--accent);color:var(--bg);font-family:'Livvic',sans-serif;font-size:13px;font-weight:500;cursor:pointer}
+.ovb:hover{background:var(--accent2)}
+
+.intro{display:flex;position:fixed;inset:0;z-index:200;background:rgba(12,15,20,0.92);backdrop-filter:blur(14px);justify-content:center;align-items:center}
+.intro.hidden{display:none}
+.intro-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px;max-width:520px;width:92%;backdrop-filter:blur(12px);animation:pop 0.4s ease-out}
+.intro-card h2{font-family:'Livvic',sans-serif;font-weight:700;font-size:24px;margin-bottom:6px;text-align:center}
+.intro-card .intro-sub{font-size:13px;color:var(--text2);text-align:center;margin-bottom:16px;line-height:1.6}
+.intro-card .intro-body{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px;text-align:center}
+.intro-3d{width:100%;height:220px;border-radius:12px;overflow:hidden;margin-bottom:16px;border:1px solid var(--border);cursor:grab}
+.intro-3d:active{cursor:grabbing}
+.intro-3d canvas{width:100%!important;height:100%!important}
+.intro-params{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.intro-param{display:flex;gap:12px;align-items:flex-start}
+.intro-icon{width:32px;height:32px;border-radius:8px;background:rgba(200,169,110,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;color:var(--accent)}
+.intro-param-text{flex:1}
+.intro-param-text strong{font-size:12px;font-weight:600;display:block;margin-bottom:1px}
+.intro-param-text p{font-size:11px;color:var(--text2);line-height:1.5;margin:0}
+.intro-footer{text-align:center;display:flex;gap:10px;justify-content:center}
+.intro-footer .ovb{padding:10px 32px;font-size:13px}
+.intro-page{display:none}.intro-page.active{display:block}
+.intro-footer{text-align:center}
+.intro-footer .ovb{padding:12px 36px;font-size:14px}
+
+@media(max-width:700px){
+  .side{width:100%;height:auto;top:auto;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(12,15,20,0.95) 70%,transparent);padding:10px 16px 16px;flex-direction:column}
+  .s-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .s-sliders{flex-direction:row;gap:8px}
+  .s-sliders .sg{flex:1}
+}
 </style>
 </head>
 <body>
-<div class="app" id="app"></div>
-<div class="status-bar" id="status"></div>
+<canvas id="landscape"></canvas>
+<div class="drag-hint">drag landscape to rotate</div>
+
+<div class="side">
+  <div class="s-header">
+    <div class="s-title">Attractor basins</div>
+    <div class="s-pips" id="pips"></div>
+  </div>
+
+  <div class="s-target" id="ban">
+    <div class="lv" id="lv">Level 1</div>
+    <div class="em" id="tEmo">Anxiety</div>
+    <div class="tr" id="tTr" style="display:none"><span id="trF"></span><span class="ar">&#8594;</span><span id="trT"></span></div>
+  </div>
+
+  <div class="s-readout">
+    <div>
+      <div class="ro-em" id="cEmo">...</div>
+      <div class="ro-w" id="cW"></div>
+    </div>
+    <div class="ring" id="ring">50</div>
+  </div>
+
+  <div class="s-sliders">
+    <div class="sg"><div class="sg-t"><span class="sg-n">Trust</span><span class="sg-v" id="v0">0.50</span></div><input type="range" min="0" max="100" value="50" id="s0" step="1"><div class="sg-lb"><span>Low</span><span>High</span></div></div>
+    <div class="sg"><div class="sg-t"><span class="sg-n">Uncertainty</span><span class="sg-v" id="v1">0.50</span></div><input type="range" min="0" max="100" value="50" id="s1" step="1"><div class="sg-lb"><span>Low</span><span>High</span></div></div>
+    <div class="sg"><div class="sg-t"><span class="sg-n">Goal momentum</span><span class="sg-v" id="v2">0.50</span></div><input type="range" min="0" max="100" value="50" id="s2" step="1"><div class="sg-lb"><span>Losing ground</span><span>Gaining ground</span></div></div>
+  </div>
+
+  <div class="s-btns">
+    <button class="btn" id="rbtn">Reset</button>
+    <button class="btn pri" id="lbtn">Lock in answer</button>
+  </div>
+
+  <div class="spacer"></div>
+</div>
+
+<div class="ov" id="ov"><div class="ovc"><div class="ovi" id="ovi"></div><div class="ovt" id="ovt"></div><div class="ovp" id="ovp"></div><button class="ovb" id="ovb">Next</button></div></div>
+
+<div class="intro" id="intro">
+  <div class="intro-card">
+    <div class="intro-page active" id="introP1">
+      <h2>Attractor basins</h2>
+      <div class="intro-body">Imagine a landscape of hills and valleys. A ball placed on this landscape will naturally roll into the nearest valley and settle there. These valleys are called attractor basins &mdash; stable states that a system tends toward.</div>
+      <div class="intro-3d" id="intro3d"></div>
+      <div class="intro-body">Your emotional life works the same way. Emotions aren&rsquo;t switches that flip on and off &mdash; they&rsquo;re a landscape of hills and valleys that you fall into. Each of these &ldquo;attractor basins&rdquo; &mdash; like joy, anxiety and hope &mdash; affects how you move, think and interact with others.</div>
+      <div class="intro-body" style="color:var(--text);font-weight:500;">What shapes the landscape? Your relationship to the world around you.</div>
+      <div class="intro-footer">
+        <button class="ovb" onclick="showIntroPage(2)">Next</button>
+      </div>
+    </div>
+    <div class="intro-page" id="introP2">
+      <h2>Three variables shape the terrain</h2>
+      <div class="intro-params">
+        <div class="intro-param">
+          <div class="intro-icon">&#9678;</div>
+          <div class="intro-param-text">
+            <strong>Trust</strong>
+            <p>How much do you trust your senses? High trust grounds you. Low trust destabilises everything.</p>
+          </div>
+        </div>
+        <div class="intro-param">
+          <div class="intro-icon">&#10038;</div>
+          <div class="intro-param-text">
+            <strong>Uncertainty</strong>
+            <p>How predictable is the world? Low uncertainty means no surprises. High uncertainty means your predictions are failing.</p>
+          </div>
+        </div>
+        <div class="intro-param">
+          <div class="intro-icon">&#10140;</div>
+          <div class="intro-param-text">
+            <strong>Goal momentum</strong>
+            <p>Are you moving towards what you value? High momentum means gaining ground. Low momentum means stalling, or feeling lost.</p>
+          </div>
+        </div>
+      </div>
+      <div class="intro-body">Move the sliders to reshape the landscape. Find the target emotion by making its basin the deepest valley.</div>
+      <div class="intro-footer">
+        <button class="ovb" style="background:transparent;border:1px solid var(--border);color:var(--text);" onclick="showIntroPage(1)">Back</button>
+        <button class="ovb" onclick="document.getElementById('intro').classList.add('hidden')">Begin</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-const CONFIG={SCRIPT_URL:'https://script.google.com/macros/s/AKfycby3_u1zdDSVCPL9l-zjr3XOuMgv5_2tBBHkAbtWmL8njT-tHAARjHAQwEPyBK6Hn14jmQ/exec',CLIENT_NAME:'Ricardo Morais',SESSIONS:['Lower Body','Upper Body'],EMOTIONS:[{name:'Excitement',desc:'Your energy level going into the session'},{name:'Pride',desc:'Your satisfaction after the session'},{name:'Serenity',desc:'How present you felt during the session'}],PROGRAMS:{'Lower Body':{bounces:{letter:'A',name:'Bounces',rx:'10–15 min · ~100–150 ground contacts',variants:['Free Skips','Line Jumps','Crossed-Extensor Hops'],track:[{id:'lb_bounce_mins',label:'Duration',unit:'min'},{id:'lb_bounce_contacts',label:'Contacts',unit:''}]},exercises:[{letter:'B',name:'Zercher Heel Elevated Squats',rx:'2 sets · 6–10 reps · 3 min rest · 60–70 kg',track:[{id:'lb_zhes_load_s1',label:'S1 load',unit:'kg'},{id:'lb_zhes_reps_s1',label:'S1 reps',unit:''},{id:'lb_zhes_load_s2',label:'S2 load',unit:'kg'},{id:'lb_zhes_reps_s2',label:'S2 reps',unit:''}]},{letter:'C',name:'Zercher Romanian Deadlift',rx:'2 sets · 6–10 reps · 3 min rest · 50–60 kg',track:[{id:'lb_zrdl_load_s1',label:'S1 load',unit:'kg'},{id:'lb_zrdl_reps_s1',label:'S1 reps',unit:''},{id:'lb_zrdl_load_s2',label:'S2 load',unit:'kg'},{id:'lb_zrdl_reps_s2',label:'S2 reps',unit:''}]},{letter:'D',name:'Landmine Deadlift',rx:'1 set · 8+ reps to failure · 3 min rest · 15–25 kg',track:[{id:'lb_lmdl_load',label:'Load',unit:'kg'},{id:'lb_lmdl_reps',label:'Reps',unit:''}]},{letter:'E',name:'Zercher Horse Stance Isometric',rx:'2 sets · 30–45 sec · 2–3 min rest · 30–40 kg',track:[{id:'lb_zhsi_load_s1',label:'S1 load',unit:'kg'},{id:'lb_zhsi_sec_s1',label:'S1 sec',unit:'s'},{id:'lb_zhsi_load_s2',label:'S2 load',unit:'kg'},{id:'lb_zhsi_sec_s2',label:'S2 sec',unit:'s'}]}]},'Upper Body':{bounces:{letter:'A',name:'Bounces',rx:'10–15 min · ~50–70 pull & push contacts',variants:['Pull — Row Bounce, Switch Grip, Pull Up Bounce','Push — Push Up Bounce, Wide to Narrow, Lean Bounce'],track:[{id:'ub_bounce_mins',label:'Duration',unit:'min'},{id:'ub_bounce_contacts',label:'Contacts',unit:''}]},exercises:[{letter:'B',name:'Garhammer Raise on Incline Bench',rx:'1 set · 8+ reps to failure',badge:'Abs',track:[{id:'ub_ghr_reps',label:'Reps',unit:''}]},{letter:'C',name:'Overhead Press',rx:'2 sets · 8–10 reps · 3 min rest · 40–45 kg',badge:'Superset',track:[{id:'ub_ohp_load_s1',label:'S1 load',unit:'kg'},{id:'ub_ohp_reps_s1',label:'S1 reps',unit:''},{id:'ub_ohp_load_s2',label:'S2 load',unit:'kg'},{id:'ub_ohp_reps_s2',label:'S2 reps',unit:''}]},{letter:'C',name:'Weighted Pull Up, Top Pause',rx:'2 sets · 8–10 reps · 3 min rest · 15–20 kg',badge:'Superset',track:[{id:'ub_wpu_load_s1',label:'S1 load',unit:'kg'},{id:'ub_wpu_reps_s1',label:'S1 reps',unit:''},{id:'ub_wpu_load_s2',label:'S2 load',unit:'kg'},{id:'ub_wpu_reps_s2',label:'S2 reps',unit:''}]},{letter:'D',name:'Ring Push Up',rx:'1–2 sets · 8–10 reps · 3 min rest · 15–20 kg',badge:'Superset',track:[{id:'ub_rpu_load_s1',label:'S1 load',unit:'kg'},{id:'ub_rpu_reps_s1',label:'S1 reps',unit:''},{id:'ub_rpu_load_s2',label:'S2 load',unit:'kg'},{id:'ub_rpu_reps_s2',label:'S2 reps',unit:''}]},{letter:'D',name:'Yates Row',rx:'1–2 sets · 8–10 reps · 3 min rest · 35–45 kg',badge:'Superset',track:[{id:'ub_yr_load_s1',label:'S1 load',unit:'kg'},{id:'ub_yr_reps_s1',label:'S1 reps',unit:''},{id:'ub_yr_load_s2',label:'S2 load',unit:'kg'},{id:'ub_yr_reps_s2',label:'S2 reps',unit:''}]}]}}};
+function showIntroPage(n){
+  document.getElementById('introP1').classList.remove('active');
+  document.getElementById('introP2').classList.remove('active');
+  document.getElementById('introP'+n).classList.add('active');
+}
 
-function currentProgram(){return CONFIG.PROGRAMS[CONFIG.SESSIONS[state.activeTab]];}
-function chunkPairs(arr){const c=[];for(let i=0;i<arr.length;i+=2)c.push(arr.slice(i,i+2));return c;}
-function allTrackIds(){const p=currentProgram();let ids=[];if(p.bounces)ids.push(...p.bounces.track.map(t=>t.id));p.exercises.forEach(ex=>ids.push(...ex.track.map(t=>t.id)));return ids;}
-function getFieldLabel(fieldId,sessionName){const p=CONFIG.PROGRAMS[sessionName];if(!p)return null;if(p.bounces)for(const t of p.bounces.track)if(t.id===fieldId)return{exercise:p.bounces.name,label:t.label,unit:t.unit};for(const ex of p.exercises)for(const t of ex.track)if(t.id===fieldId)return{exercise:ex.name,label:t.label,unit:t.unit};return null;}
+// Intro 3D preview landscape
+(function(){
+  var ctr=document.getElementById('intro3d');
+  if(!ctr)return;
+  var w=ctr.clientWidth||460,h=220;
+  var sc=new THREE.Scene();
+  var cam=new THREE.PerspectiveCamera(50,w/h,0.1,100);
+  var ren=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  ren.setSize(w,h);ren.setPixelRatio(Math.min(devicePixelRatio,2));ren.setClearColor(0x0a0e17);
+  ctr.appendChild(ren.domElement);
+  sc.add(new THREE.AmbientLight(0xffffff,0.35));
+  var dl=new THREE.DirectionalLight(0xffffff,0.7);dl.position.set(3,5,4);sc.add(dl);
 
-function renderDiaryEntry(entry){const sessionName=entry.session;const prog=CONFIG.PROGRAMS[sessionName];if(!prog)return '';const fmtDate=d=>{try{return new Date(d).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});}catch{return d;}};const exerciseData={};const allExercises=[];if(prog.bounces)allExercises.push({name:prog.bounces.name,fields:prog.bounces.track});prog.exercises.forEach(ex=>allExercises.push({name:ex.name,fields:ex.track}));allExercises.forEach(ex=>{const values=[];ex.fields.forEach(t=>{const val=entry.strength?entry.strength[t.id]:'';if(val!==''&&val!==undefined&&val!==null)values.push(t.label+': '+val+(t.unit?' '+t.unit:''));});if(values.length>0)exerciseData[ex.name]=values.join(' · ');});const exerciseNames=Object.keys(exerciseData);if(exerciseNames.length===0&&!entry.notes)return '';const EMOTION_CUTOVER=new Date('2026-03-01');const entryDate=new Date(entry.date);const scaleOld=entryDate<EMOTION_CUTOVER;const emotionChips=CONFIG.EMOTIONS.filter(e=>entry.emotions&&entry.emotions[e.name]!==undefined&&entry.emotions[e.name]!=='').map(e=>{let val=Number(entry.emotions[e.name]);if(scaleOld&&val>=1&&val<=5)val=val*2;return`<span class="diary-emotion-chip">${e.name} ${val}/10</span>`;}).join('');return`<div class="diary-entry"><div class="diary-date"><span>${fmtDate(entry.date)}</span><span class="diary-session-badge">${sessionName}</span></div>${exerciseNames.map(name=>`<div class="diary-exercise"><span class="diary-ex-name">${name}</span><span class="diary-ex-data">${exerciseData[name]}</span></div>`).join('')}${emotionChips?`<div class="diary-emotions">${emotionChips}</div>`:''}${entry.notes?`<div class="diary-notes">${entry.notes}</div>`:''}</div>`;}
+  var basins=[
+    {cx:1.5,cz:1.5,d:1.4,w:0.8,col:0xffa726},
+    {cx:-1.5,cz:1.2,d:1.2,w:0.7,col:0xf25c5c},
+    {cx:1.2,cz:-1.5,d:1.0,w:0.85,col:0x6dd5a0},
+    {cx:-1.0,cz:-1.5,d:1.1,w:0.8,col:0x7a8694},
+    {cx:0.5,cz:0.3,d:0.7,w:0.6,col:0x3cc9a8}
+  ];
 
-function getLoadMetrics(sessionName){const prog=CONFIG.PROGRAMS[sessionName];if(!prog)return[];let loads=[];prog.exercises.forEach(ex=>{const loadField=ex.track.find(t=>t.label==='S1 load');if(loadField)loads.push({id:loadField.id,name:ex.name});});return loads;}
+  var res=70,geo=new THREE.PlaneGeometry(6,6,res,res);geo.rotateX(-Math.PI/2);
+  var pos=geo.attributes.position;
+  var cols=new Float32Array(pos.count*3);
+  geo.setAttribute('color',new THREE.BufferAttribute(cols,3));
+  for(var i=0;i<pos.count;i++){
+    var x=pos.getX(i),z=pos.getZ(i),y=0;
+    for(var j=0;j<basins.length;j++){var b=basins[j],dx=x-b.cx,dz=z-b.cz;y+=-b.d*Math.exp(-(dx*dx+dz*dz)/(b.w*b.w)*2);}
+    pos.setY(i,y*0.7);
+    var rr=0,gg=0,bb=0,tw=0;
+    for(var j=0;j<basins.length;j++){var b=basins[j],dx=x-b.cx,dz=z-b.cz;var wt=Math.exp(-(dx*dx+dz*dz)/(b.w*b.w*1.5))*b.d;var cc=new THREE.Color(b.col);rr+=cc.r*wt;gg+=cc.g*wt;bb+=cc.b*wt;tw+=wt;}
+    var mf=Math.min(tw,1)*0.7;
+    cols[i*3]=0.06*(1-mf)+(tw>0.01?rr/tw:0)*mf;cols[i*3+1]=0.08*(1-mf)+(tw>0.01?gg/tw:0)*mf;cols[i*3+2]=0.12*(1-mf)+(tw>0.01?bb/tw:0)*mf;
+  }
+  geo.attributes.color.needsUpdate=true;geo.computeVertexNormals();
+  sc.add(new THREE.Mesh(geo,new THREE.MeshPhongMaterial({vertexColors:true,shininess:25,transparent:true,opacity:0.88,side:THREE.DoubleSide})));
+  sc.add(new THREE.Mesh(geo.clone(),new THREE.MeshBasicMaterial({color:0x1a2a44,wireframe:true,transparent:true,opacity:0.1})));
 
-const TABS=[...CONFIG.SESSIONS,'Diary'];
-const state={scriptUrl:CONFIG.SCRIPT_URL,activeTab:0,emotions:CONFIG.EMOTIONS.reduce((o,e)=>({...o,[e.name]:5}),{}),tracking:{},notes:'',history:[],allHistory:[],graphMode:'emotions',submitting:false,isAdmin:new URLSearchParams(window.location.search).get('admin')==='true'};
+  var ball=new THREE.Mesh(new THREE.SphereGeometry(0.1,12,12),new THREE.MeshBasicMaterial({color:0xffffff}));
+  var deepB=basins[0];
+  ball.position.set(deepB.cx,-deepB.d*0.7+0.12,deepB.cz);
+  sc.add(ball);
+  sc.add(new THREE.Mesh(new THREE.SphereGeometry(0.16,12,12),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.12})));
+  sc.children[sc.children.length-1].position.copy(ball.position);
 
-function isDiary(){return TABS[state.activeTab]==='Diary';}
+  var rY=0.5,rX=0.4,tRY=0.5,tRX=0.4,isDrag=false,pX=0,pY=0;
+  ctr.addEventListener('pointerdown',function(e){isDrag=true;pX=e.clientX;pY=e.clientY;});
+  window.addEventListener('pointerup',function(){isDrag=false;});
+  window.addEventListener('pointermove',function(e){if(!isDrag)return;tRY+=(e.clientX-pX)*0.006;tRX+=(e.clientY-pY)*0.005;tRX=Math.max(0.15,Math.min(1.1,tRX));pX=e.clientX;pY=e.clientY;});
 
-function render(){const app=document.getElementById('app');const diary=isDiary();const prog=diary?null:currentProgram();app.innerHTML=`<div class="header"><h1>Session Tracker</h1><span class="client-badge">${CONFIG.CLIENT_NAME}</span></div><div class="tabs" role="tablist">${TABS.map((s,i)=>`<button class="tab ${i===state.activeTab?'active':''}" onclick="setTab(${i})" role="tab">${s}</button>`).join('')}</div>${diary?renderDiaryView():renderSessionForm(prog)}${state.isAdmin?`<div class="section-label" style="color:var(--text-3);margin-top:12px;">Admin</div><div class="card" style="font-size:13px;color:var(--text-2);"><p style="margin-bottom:4px;">Connected to Google Sheet ✓</p><p>Entries: ${diary?state.allHistory.length:state.history.length} · Tab: ${TABS[state.activeTab]}</p></div>`:''}`;if(!diary){renderLegend();if(state.history.length>=2){requestAnimationFrame(()=>{requestAnimationFrame(drawChart);});}}}
+  function anim(){
+    requestAnimationFrame(anim);
+    rY+=(tRY-rY)*0.08;rX+=(tRX-rX)*0.08;
+    var d=6;
+    cam.position.x=Math.sin(rY)*Math.cos(rX)*d;cam.position.y=Math.sin(rX)*d;cam.position.z=Math.cos(rY)*Math.cos(rX)*d;
+    cam.lookAt(0,-0.4,0);ren.render(sc,cam);
+  }
+  anim();
 
-function renderSessionForm(prog){return`<div style="padding:8px 0;font-size:13px;color:var(--text-2);">${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>${prog.bounces?`<div class="section-label bounce">Bounces</div><div class="card"><div class="exercise-block"><div class="exercise-header"><div class="exercise-letter bounce-letter">${prog.bounces.letter}</div><div class="exercise-info"><div class="exercise-name">${prog.bounces.name}</div><div class="exercise-rx">${prog.bounces.rx}</div></div></div>${prog.bounces.variants?`<ul class="exercise-variants">${prog.bounces.variants.map(v=>`<li>${v}</li>`).join('')}</ul>`:''}<div class="input-row">${prog.bounces.track.map(t=>`<div class="input-group"><span class="input-label">${t.label}</span><input type="number" class="num-field bounce-field" placeholder="—" value="${state.tracking[t.id]||''}" oninput="setTracking('${t.id}',this.value)"/>${t.unit?`<span class="input-unit">${t.unit}</span>`:''}</div>`).join('')}</div></div></div>`:''}<div class="section-label strength">Exercises</div><div class="card">${prog.exercises.map((ex,i)=>`${i>0?'<hr class="card-divider">':''}<div class="exercise-block"><div class="exercise-header"><div class="exercise-letter">${ex.letter}</div><div class="exercise-info"><div class="exercise-name">${ex.name}${ex.badge?`<span class="superset-badge">${ex.badge}</span>`:''}</div><div class="exercise-rx">${ex.rx}</div></div></div>${chunkPairs(ex.track).map(pair=>`<div class="input-row">${pair.map(t=>`<div class="input-group"><span class="input-label">${t.label}</span><input type="number" class="num-field" placeholder="—" value="${state.tracking[t.id]||''}" oninput="setTracking('${t.id}',this.value)"/>${t.unit?`<span class="input-unit">${t.unit}</span>`:''}</div>`).join('')}</div>`).join('')}</div>`).join('')}</div><div class="section-label emotion">Emotion Check-in</div><div class="card">${CONFIG.EMOTIONS.map(e=>`<div class="metric-row"><div class="metric-name-wrap"><span class="metric-name">${e.name}</span><span class="metric-desc">${e.desc}</span></div><div class="slider-wrap"><input type="range" min="1" max="10" step="1" value="${state.emotions[e.name]}" class="emotion-slider" oninput="setEmotion('${e.name}',this.value)"/></div><span class="metric-value emotion-val">${state.emotions[e.name]}</span></div>`).join('')}</div><div class="section-label" style="color:var(--text-3)">Notes</div><div class="card"><textarea class="notes-field" placeholder="Session notes, RPE, how it felt…" oninput="state.notes=this.value">${state.notes}</textarea></div><button class="submit-btn" onclick="submitSession()" ${state.submitting?'disabled':''}>${state.submitting?'Saving…':'Log Session'}</button><div class="section-label" style="color:var(--text-3);margin-top:12px;">Trends</div><div class="graph-container"><div class="graph-header"><span class="graph-title">Progress</span><div class="graph-toggle"><button class="${state.graphMode==='emotions'?'active':''}" onclick="setGraphMode('emotions')">Emotions</button><button class="${state.graphMode==='strength'?'active':''}" onclick="setGraphMode('strength')">Loads</button></div></div><div class="graph-legend" id="legend"></div><div class="graph-canvas-wrap">${state.history.length<2?'<div class="empty-graph">Log at least 2 sessions to see trends</div>':'<canvas id="trendChart"></canvas>'}</div></div>`;}
+  var ro=new ResizeObserver(function(){var nw=ctr.clientWidth;if(nw>0){cam.aspect=nw/h;cam.updateProjectionMatrix();ren.setSize(nw,h);}});
+  ro.observe(ctr);
+})();
 
-function renderDiaryView(){const entries=state.allHistory.slice().reverse();if(entries.length===0)return'<div class="diary-empty" style="padding:40px 0;">No sessions logged yet</div>';return entries.map(entry=>renderDiaryEntry(entry)).filter(h=>h).join('');}
+(function(){
 
-function setTab(i){state.activeTab=i;state.tracking={};if(isDiary())loadAllHistory();else loadHistory();render();}
-function setEmotion(name,val){state.emotions[name]=parseInt(val);render();}
-function setTracking(id,val){state.tracking[id]=val;}
-function setGraphMode(m){state.graphMode=m;render();}
+var E={
+  anxiety:{n:'Anxiety',c:0xf25c5c,cx:-0.5,cz:0.55,bd:1.5,bw:0.26,
+    w:['tense','tightly','fluttering','halting','tentative','rushing','pulsing','accelerating','pulling','pushing','effortful','gripping','clenching'],
+    h:'High levels of uncertainty produce maladaptive strategies, including muscular bracing and hypervigilance.',
+    cr:-0.8,sr:0.6,gr:-0.5},
+  joy:{n:'Joy',c:0xffa726,cx:0.55,cz:0.6,bd:1.3,bw:0.28,
+    w:['upswelling','surging','swelling','bursting','cresting','pulsing','floating','bounding','gliding','exploding','accelerating','rushing','loosely'],
+    h:'The elation of right relation liberates degrees of freedom, bringing extraversion and playfulness.',
+    cr:0.3,sr:-0.6,gr:1.0},
+  fear:{n:'Fear',c:0xff7043,cx:-0.45,cz:0.2,bd:1.35,bw:0.22,
+    w:['freezing','shrinking','dropping','pulling','gripping','rushing','trembling','sinking','tightening','recoiling','jolting','bracing','plummeting'],
+    h:'A specific threat mobilises the organism into fight or flight.',
+    cr:-0.5,sr:1.0,gr:-0.7},
+  depression:{n:'Depression',c:0x7a8694,cx:-0.35,cz:-0.6,bd:1.3,bw:0.3,
+    w:['dropping','fading','disappearing','drawn out','heavy','weak','still','halting','tense','languorous','fleeting','draining','numbing','dimming'],
+    h:'A \u201Clocked-in\u201D brain struggles to update with new beliefs.',
+    cr:-0.4,sr:0.1,gr:-0.8},
+  serenity:{n:'Serenity',c:0x6dd5a0,cx:0.4,cz:-0.6,bd:1.4,bw:0.3,
+    w:['floating','gliding','relaxing','gentle','easy','loosely','still','languorous','swinging','flowing','settling','softening','resting','releasing'],
+    h:'Inner balance allows the tolerance of ambiguity.',
+    cr:0.7,sr:-0.15,gr:-0.15},
+  confidence:{n:'Confidence',c:0x5b9cf5,cx:0.45,cz:0.15,bd:1.25,bw:0.24,
+    w:['surging','steady','grounding','forceful','powerful','easy','gliding','bounding','pressing','pushing','anchoring','widening'],
+    h:'Concentration on an outcome moves the whole self towards it.',
+    cr:1.0,sr:-0.15,gr:0.55},
+  hope:{n:'Hope',c:0x3cc9a8,cx:0.2,cz:0.1,bd:1.3,bw:0.22,
+    w:['lifting','rising','reaching','leaning','surging','flickering','swelling','pulling','floating','tentative','kindling','brightening','opening'],
+    h:'Trust that future goals will be met allows uncertainty to be accommodated.',
+    cr:0.3,sr:0.3,gr:0.6}
+};
+var K=Object.keys(E);
 
-async function submitSession(){if(state.submitting)return;state.submitting=true;render();showStatus('Saving session…','loading');const payload={action:'log',date:new Date().toISOString().split('T')[0],session:CONFIG.SESSIONS[state.activeTab],client:CONFIG.CLIENT_NAME,emotions:state.emotions,strength:state.tracking,notes:state.notes};try{await fetch(state.scriptUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});showStatus('Session logged ✓','success');state.emotions=CONFIG.EMOTIONS.reduce((o,e)=>({...o,[e.name]:5}),{});state.tracking={};state.notes='';const prevCount=state.history.length;const delays=[3000,5000,7000,10000,15000];for(let attempt=0;attempt<delays.length;attempt++){await new Promise(resolve=>setTimeout(resolve,delays[attempt]));try{const url=`${state.scriptUrl}?action=history&client=${encodeURIComponent(CONFIG.CLIENT_NAME)}&session=${encodeURIComponent(CONFIG.SESSIONS[state.activeTab])}`;const resp=await fetch(url);const data=await resp.json();if(data&&data.rows){state.history=data.rows;render();if(data.rows.length>prevCount){console.log(`New data found on attempt ${attempt+1}`);break;}}}catch(err){console.log(`History poll attempt ${attempt+1} failed:`,err.message);}}}catch(err){showStatus('Error saving — check your connection','error');console.error(err);}state.submitting=false;render();}
+var levelInsights={
+  anxiety:'Anxiety deepens when trust falls and goals stall. The behavioural inhibition system activates \u2014 uncertainty rises as goal orientation drops, and the organism can\u2019t rely on its own signals while the world keeps violating predictions. Notice how anxiety is immobilising, unlike fear which mobilises.',
+  joy:'Joy needs a sense of safety \u2014 which can come from high trust or from low uncertainty \u2014 combined with the arousal of forward momentum. When uncertainty rises, joy shares territory with hope: both draw on trust and momentum, but hope extends further into uncertain terrain.',
+  fear:'Fear responds to a specific threat \u2014 extreme uncertainty about an immediate outcome. Unlike anxiety, which is a chronic immobilising hum, fear is acute and mobilising: fight or flight. The organism doesn\u2019t freeze, it acts. Low trust and low momentum deepen it further.',
+  depression:'Depression is dominated by low momentum \u2014 the sense that nothing is moving toward what matters. Low trust locks it in: the brain struggles to update with new beliefs. Notice how uncertainty barely registers \u2014 the system has stopped responding to new information.',
+  serenity:'Serenity is anchored in high trust, and what makes it distinctive is that it tolerates uncertainty \u2014 even high uncertainty doesn\u2019t collapse it if trust is strong enough. Serenity isn\u2019t a retreat from action: it\u2019s a platform that enables striving if needed, rather than excluding it.',
+  confidence:'Confidence requires high trust and momentum together. Uncertainty doesn\u2019t need to be low \u2014 it gets functionally neutralised when you trust your signals and you\u2019re making progress. You don\u2019t need the world to be predictable; you trust your capacity to handle whatever comes.',
+  hope:'Hope accommodates uncertainty \u2014 that\u2019s what distinguishes it from joy. Both need trust and momentum, but hope holds even when predictions are being violated. It\u2019s trust in future goals that allows the present uncertainty to be tolerated.',
+  'anxiety-serenity':'To move from anxiety to serenity, trust had to rise dramatically. But uncertainty didn\u2019t need to drop \u2014 serenity tolerates ambiguity. The path runs through trust, not through eliminating uncertainty. Momentum could stay low: serenity is a platform, not a pursuit.',
+  'depression-hope':'Depression to hope required raising both trust and momentum. The locked-in system had to start trusting its signals again and find forward movement. Uncertainty could stay moderate \u2014 hope doesn\u2019t need the world to be predictable.',
+  'fear-confidence':'Fear to confidence required raising trust and momentum while the acute threat response subsided. Confidence doesn\u2019t need uncertainty to disappear \u2014 it needs the organism to trust itself enough that uncertainty stops mattering.'
+};
 
-async function loadHistory(){if(!state.scriptUrl)return;try{const url=`${state.scriptUrl}?action=history&client=${encodeURIComponent(CONFIG.CLIENT_NAME)}&session=${encodeURIComponent(CONFIG.SESSIONS[state.activeTab])}`;const resp=await fetch(url);const data=await resp.json();if(data&&data.rows){state.history=data.rows;render();}}catch(err){console.log('Could not load history:',err.message);}}
+var levels=[
+  {ty:'f',tg:'anxiety'},{ty:'f',tg:'joy'},{ty:'f',tg:'fear'},{ty:'f',tg:'depression'},
+  {ty:'f',tg:'serenity'},{ty:'f',tg:'confidence'},{ty:'f',tg:'hope'},
+  {ty:'t',fr:'anxiety',to:'serenity'},{ty:'t',fr:'depression',to:'hope'},{ty:'t',fr:'fear',to:'confidence'}
+];
+var cl=0,tp=0;
 
-async function loadAllHistory(){if(!state.scriptUrl)return;try{const url=`${state.scriptUrl}?action=history&client=${encodeURIComponent(CONFIG.CLIENT_NAME)}`;const resp=await fetch(url);const data=await resp.json();if(data&&data.rows){state.allHistory=data.rows;render();}}catch(err){console.log('Could not load history:',err.message);}}
+var cv=document.getElementById('landscape'),W=innerWidth,H=innerHeight;
+var sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(50,W/H,0.1,100);
+var ren=new THREE.WebGLRenderer({canvas:cv,antialias:true});
+ren.setSize(W,H);ren.setPixelRatio(Math.min(devicePixelRatio,2));ren.setClearColor(0x0a0e17);
+sc.add(new THREE.AmbientLight(0xffffff,0.35));
+var dl=new THREE.DirectionalLight(0xffffff,0.7);dl.position.set(3,5,4);sc.add(dl);
 
-const PALETTE=['#E8845C','#EFD06C','#6C8EEF','#CB6CEF','#5CCFB5','#EF6C6C','#8BD4A0'];
+var camDist=7,rY=0.5,rX=0.42,tRY=0.5,tRX=0.42;
 
-function renderLegend(){const el=document.getElementById('legend');if(!el)return;let items;if(state.graphMode==='emotions')items=CONFIG.EMOTIONS.map(e=>e.name);else items=getLoadMetrics(CONFIG.SESSIONS[state.activeTab]).map(m=>m.name);el.innerHTML=items.map((name,i)=>`<span class="legend-item"><span class="legend-dot" style="background:${PALETTE[i%PALETTE.length]}"></span>${name}</span>`).join('');}
+var res=90,geo=new THREE.PlaneGeometry(6,6,res,res);geo.rotateX(-Math.PI/2);
+var pos=geo.attributes.position,cols=new Float32Array(pos.count*3);
+geo.setAttribute('color',new THREE.BufferAttribute(cols,3));
+sc.add(new THREE.Mesh(geo,new THREE.MeshPhongMaterial({vertexColors:true,shininess:25,transparent:true,opacity:0.88,side:THREE.DoubleSide})));
+var wG=geo.clone();sc.add(new THREE.Mesh(wG,new THREE.MeshBasicMaterial({color:0x1a2a44,wireframe:true,transparent:true,opacity:0.1})));
 
-function drawChart(){const canvas=document.getElementById('trendChart');if(!canvas||state.history.length<2)return;const ctx=canvas.getContext('2d');const dpr=window.devicePixelRatio||1;const rect=canvas.parentElement.getBoundingClientRect();if(rect.width===0||rect.height===0){requestAnimationFrame(drawChart);return;}canvas.width=rect.width*dpr;canvas.height=rect.height*dpr;canvas.style.width=rect.width+'px';canvas.style.height=rect.height+'px';ctx.scale(dpr,dpr);ctx.clearRect(0,0,rect.width,rect.height);const W=rect.width,H=rect.height;const PAD={top:12,right:12,bottom:28,left:32};const plotW=W-PAD.left-PAD.right;const plotH=H-PAD.top-PAD.bottom;const rows=state.history.slice(-20);const n=rows.length;if(state.graphMode==='emotions'){const EMOTION_CUTOVER=new Date('2026-03-01');CONFIG.EMOTIONS.forEach((emo,ei)=>{const values=rows.map(r=>{let v=r.emotions?(r.emotions[emo.name]||5):5;v=Number(v);const d=new Date(r.date);if(d<EMOTION_CUTOVER&&v>=1&&v<=5)v=v*2;return v;});drawLine(ctx,values,n,PAD,plotW,plotH,1,10,PALETTE[ei%PALETTE.length]);});drawAxes(ctx,rows,PAD,plotW,plotH,1,10,W,H);}else{const loadMetrics=getLoadMetrics(CONFIG.SESSIONS[state.activeTab]);let allVals=[];loadMetrics.forEach(m=>{rows.forEach(r=>{const v=r.strength?parseFloat(r.strength[m.id]):NaN;if(!isNaN(v))allVals.push(v);});});const yMin=allVals.length?Math.max(0,Math.min(...allVals)-10):0;const yMax=allVals.length?Math.max(...allVals)+10:100;loadMetrics.forEach((m,mi)=>{const values=rows.map(r=>{const v=r.strength?parseFloat(r.strength[m.id]):NaN;return isNaN(v)?null:v;});drawLine(ctx,values,n,PAD,plotW,plotH,yMin,yMax,PALETTE[mi%PALETTE.length]);});drawAxes(ctx,rows,PAD,plotW,plotH,yMin,yMax,W,H);}}
+var P=[],SP=[];
+for(var i=0;i<K.length;i++){
+  var e=E[K[i]];P.push({cx:e.cx*3,cz:e.cz*3,d:e.bd,w:e.bw*3});
+  var c2=document.createElement('canvas');c2.width=256;c2.height=64;
+  var x2=c2.getContext('2d');x2.font='500 26px Livvic,sans-serif';x2.textAlign='center';x2.textBaseline='middle';
+  x2.fillStyle='#'+new THREE.Color(e.c).getHexString();x2.fillText(e.n,128,32);
+  var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c2),transparent:true,depthTest:false}));
+  sp.scale.set(1.1,0.32,1);sc.add(sp);SP.push(sp);
+}
 
-function drawLine(ctx,values,n,PAD,plotW,plotH,yMin,yMax,color){ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2;ctx.lineJoin='round';let started=false;values.forEach((v,i)=>{if(v===null||v===undefined)return;const x=PAD.left+(i/(n-1))*plotW;const y=PAD.top+plotH-((v-yMin)/(yMax-yMin))*plotH;if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);});ctx.stroke();values.forEach((v,i)=>{if(v===null||v===undefined)return;const x=PAD.left+(i/(n-1))*plotW;const y=PAD.top+plotH-((v-yMin)/(yMax-yMin))*plotH;ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();});}
+var bl=new THREE.Mesh(new THREE.SphereGeometry(0.12,16,16),new THREE.MeshBasicMaterial({color:0xffffff}));sc.add(bl);
+var gw=new THREE.Mesh(new THREE.SphereGeometry(0.2,16,16),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.12}));sc.add(gw);
+var bp={x:0,y:0,z:0},bt={x:0,y:0,z:0};
+var currentDeepest='';
 
-function drawAxes(ctx,rows,PAD,plotW,plotH,yMin,yMax,W,H){ctx.strokeStyle='#2A2D3A';ctx.lineWidth=1;const steps=4;for(let i=0;i<=steps;i++){const y=PAD.top+(i/steps)*plotH;ctx.beginPath();ctx.moveTo(PAD.left,y);ctx.lineTo(PAD.left+plotW,y);ctx.stroke();const val=yMax-(i/steps)*(yMax-yMin);ctx.fillStyle='#5D6175';ctx.font='10px DM Sans';ctx.textAlign='right';ctx.fillText(Number.isInteger(val)?val:val.toFixed(0),PAD.left-6,y+3);}ctx.fillStyle='#5D6175';ctx.font='10px DM Sans';ctx.textAlign='center';const fmt=d=>{try{return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short'});}catch{return d;}};if(rows.length){ctx.fillText(fmt(rows[0].date),PAD.left,H-4);if(rows.length>2){const mid=Math.floor(rows.length/2);ctx.fillText(fmt(rows[mid].date),PAD.left+(mid/(rows.length-1))*plotW,H-4);}ctx.fillText(fmt(rows[rows.length-1].date),PAD.left+plotW,H-4);}}
+function gY(x,z){var y=0;for(var i=0;i<P.length;i++){var p=P[i],dx=x-p.cx,dz=z-p.cz;y+=-p.d*Math.exp(-(dx*dx+dz*dz)/(p.w*p.w)*2);}return y*0.7;}
 
-function showStatus(msg,type){const el=document.getElementById('status');el.textContent=msg;el.className='status-bar '+type+' show';setTimeout(()=>el.classList.remove('show'),3000);}
+function updateLandscape(trust,uncert,goal){
+  for(var i=0;i<K.length;i++){var e=E[K[i]];var s=1+(trust-0.5)*2*e.cr+(uncert-0.5)*2*e.sr+(goal-0.5)*2*e.gr;P[i].d=Math.max(0.1,e.bd*Math.max(0.05,s));P[i].w=e.bw*3*(0.8+s*0.2);}
+  var p=pos,cl2=geo.attributes.color,wp=wG.attributes.position;
+  for(var i=0;i<p.count;i++){var x=p.array[i*3],z=p.array[i*3+2],y=0;
+    for(var j=0;j<P.length;j++){var pp=P[j],dx=x-pp.cx,dz=z-pp.cz;y+=-pp.d*Math.exp(-(dx*dx+dz*dz)/(pp.w*pp.w)*2);}
+    y*=0.7;p.setY(i,y);wp.setY(i,y);
+    var rr=0,gg=0,bb=0,tw=0;
+    for(var j=0;j<P.length;j++){var pp=P[j],dx=x-pp.cx,dz=z-pp.cz;var wt=Math.exp(-(dx*dx+dz*dz)/(pp.w*pp.w*1.5))*(pp.d/E[K[j]].bd);var cc=new THREE.Color(E[K[j]].c);rr+=cc.r*wt;gg+=cc.g*wt;bb+=cc.b*wt;tw+=wt;}
+    var mf=Math.min(tw,1)*0.7;cl2.setXYZ(i,0.06*(1-mf)+(tw>0.01?rr/tw:0)*mf,0.08*(1-mf)+(tw>0.01?gg/tw:0)*mf,0.12*(1-mf)+(tw>0.01?bb/tw:0)*mf);}
+  p.needsUpdate=true;wp.needsUpdate=true;cl2.needsUpdate=true;geo.computeVertexNormals();
+  var deepest=-Infinity,bx=0,bz=0,dI=0;
+  for(var i=0;i<P.length;i++){if(P[i].d>deepest){deepest=P[i].d;bx=P[i].cx;bz=P[i].cz;dI=i;}}
+  bt.x=bx;bt.z=bz;bt.y=gY(bx,bz)+0.14;currentDeepest=K[dI];
+  for(var i=0;i<K.length;i++){var pp=P[i],cy=0;for(var j=0;j<P.length;j++){var p2=P[j],dx=pp.cx-p2.cx,dz=pp.cz-p2.cz;cy+=-p2.d*Math.exp(-(dx*dx+dz*dz)/(p2.w*p2.w)*2);}cy*=0.7;SP[i].position.set(pp.cx,cy-0.2,pp.cz);}
+  return currentDeepest;
+}
 
-render();
-loadHistory();
+function proximity(targetKey){var targetD=0,maxD=0;for(var i=0;i<K.length;i++){if(K[i]===targetKey)targetD=P[i].d;if(P[i].d>maxD)maxD=P[i].d;}if(maxD<=0)return 0;return Math.round((targetD/maxD)*100);}
+function pw(k,n){var w=E[k].w.slice(),p=[];for(var i=0;i<Math.min(n,w.length);i++){var idx=Math.floor(Math.random()*w.length);p.push(w.splice(idx,1)[0]);}return p;}
+function hex(c){return'#'+new THREE.Color(c).getHexString();}
+
+var sE=[document.getElementById('s0'),document.getElementById('s1'),document.getElementById('s2')];
+var vE=[document.getElementById('v0'),document.getElementById('v1'),document.getElementById('v2')];
+function gV(){return sE.map(function(s){return parseInt(s.value)/100;});}
+
+function onSlider(){
+  var v=gV();for(var i=0;i<3;i++)vE[i].textContent=v[i].toFixed(2);
+  var closest=updateLandscape(v[0],v[1],v[2]);var e=E[closest];
+  var el=document.getElementById('cEmo');el.textContent=e.n;el.style.color=hex(e.c);
+  document.getElementById('cW').textContent=pw(closest,4).join(', ');
+  var lv=levels[cl];if(!lv)return;
+  var tk=lv.ty==='f'?lv.tg:(tp===0?lv.fr:lv.to);
+  var prox=proximity(tk);var r=document.getElementById('ring');r.textContent=prox;
+  r.className='ring'+(prox>=95?' hot':prox>=70?' warm':'');
+}
+
+function setupLevel(){
+  var lv=levels[cl];
+  if(!lv){
+    var o=document.getElementById('ov');o.classList.add('show');
+    document.getElementById('ovi').className='ovi w';document.getElementById('ovi').innerHTML='&#9734;';
+    document.getElementById('ovt').textContent='You finished all the levels!';document.getElementById('ovt').style.color='#c8a96e';
+    document.getElementById('ovp').innerHTML='Did you learn how to transition between emotions?<br><br>This work is part of <strong>The Emotional Athlete</strong> project, an ambitious attempt to formalise the role of emotions in motor learning.<br><br>This game comes from research on two cognitive science theories: predictive processing and enactivism. These theories help us explain what emotions are and how they relate to each other.<br><br><a href="https://flynndisney.substack.com/" target="_blank" style="color:var(--accent);text-decoration:underline;">Want to support The Emotional Athlete? Subscribe for weekly content.</a>';
+    document.getElementById('ovb').textContent='Play again';
+    document.getElementById('ovb').onclick=function(){o.classList.remove('show');cl=0;window._shownParticiples=false;setupLevel();};
+    return;
+  }
+
+  // Participles interstitial before level 8 (depression→hope)
+  if(cl===8 && !window._shownParticiples){
+    window._shownParticiples=true;
+    var o=document.getElementById('ov');o.classList.add('show');
+    document.getElementById('ovi').className='ovi w';document.getElementById('ovi').innerHTML='&#10022;';
+    document.getElementById('ovt').textContent='The words inside the basins';document.getElementById('ovt').style.color='var(--accent)';
+    document.getElementById('ovp').innerHTML='Did you notice the words like \u201Csurging\u201D, \u201Cdropping\u201D or \u201Ctightening\u201D? These participles represent different points in a basin, showing you that the same emotion can work in many different ways.<br><br>Go through the game again afterwards and explore different points in the attractor basins.';
+    document.getElementById('ovb').textContent='Continue';
+    document.getElementById('ovb').onclick=function(){o.classList.remove('show');setupLevelInner();};
+    return;
+  }
+  setupLevelInner();
+}
+
+function setupLevelInner(){
+  var lv=levels[cl];
+  tp=0;var pp=document.getElementById('pips');pp.innerHTML='';
+  for(var i=0;i<levels.length;i++){var p=document.createElement('div');p.className='pip'+(i<cl?' done':'')+(i===cl?' cur':'');pp.appendChild(p);}
+  document.getElementById('lv').textContent='Level '+(cl+1);var ti=document.getElementById('tTr');
+  if(lv.ty==='f'){var e=E[lv.tg];document.getElementById('tEmo').textContent=e.n;document.getElementById('tEmo').style.color=hex(e.c);document.getElementById('ban').style.setProperty('--tc',hex(e.c));ti.style.display='none';document.getElementById('lbtn').textContent='Lock in answer';}
+  else{var fe=E[lv.fr],te=E[lv.to];document.getElementById('tEmo').textContent=fe.n;document.getElementById('tEmo').style.color=hex(fe.c);document.getElementById('ban').style.setProperty('--tc',hex(fe.c));ti.style.display='block';document.getElementById('trF').textContent=fe.n;document.getElementById('trF').style.color=hex(fe.c);document.getElementById('trT').textContent=te.n;document.getElementById('trT').style.color=hex(te.c);document.getElementById('lbtn').textContent='Lock in start';}
+
+  // Level 0 (anxiety): start sliders away from anxiety zone
+  if(cl===0){sE[0].value=80;sE[1].value=20;sE[2].value=75;}
+  else{sE.forEach(function(s){s.value=50;});}
+  onSlider();
+}
+
+function checkAnswer(){var lv=levels[cl];if(!lv)return;
+  if(lv.ty==='f'){showResult(currentDeepest===lv.tg,lv.tg);}
+  else{if(tp===0){if(currentDeepest===lv.fr){tp=1;var te=E[lv.to];document.getElementById('tEmo').textContent=te.n;document.getElementById('tEmo').style.color=hex(te.c);document.getElementById('ban').style.setProperty('--tc',hex(te.c));document.getElementById('lbtn').textContent='Lock in answer';onSlider();}else{showResult(false,lv.fr);}}
+  else{showResult(currentDeepest===lv.to,lv.to);}}
+}
+
+function showResult(win,k){var o=document.getElementById('ov');o.classList.add('show');var e=E[k];
+  document.getElementById('ovi').className='ovi '+(win?'w':'l');document.getElementById('ovi').innerHTML=win?'&#10003;':'&#10007;';
+  document.getElementById('ovt').textContent=win?e.n:'Not quite';document.getElementById('ovt').style.color=win?hex(e.c):'var(--fail)';
+  if(win){
+    var lv=levels[cl];
+    var insightKey=lv.ty==='f'?lv.tg:lv.fr+'-'+lv.to;
+    var insight=levelInsights[insightKey]||'';
+    document.getElementById('ovp').innerHTML='<span style="display:block;margin-bottom:12px;font-style:italic;color:var(--text2);">'+e.h+'</span>'+insight;
+    var b=document.getElementById('ovb');b.textContent=cl<levels.length-1?'Next level':'Finish';b.onclick=function(){o.classList.remove('show');cl++;setupLevel();};}
+  else{var cur=E[currentDeepest];document.getElementById('ovp').textContent='The ball is in '+cur.n.toLowerCase()+', not '+e.n.toLowerCase()+'. Watch the landscape and adjust.';document.getElementById('ovb').textContent='Try again';document.getElementById('ovb').onclick=function(){o.classList.remove('show');};}
+}
+
+sE.forEach(function(s){s.addEventListener('input',onSlider);});
+document.getElementById('rbtn').addEventListener('click',function(){sE.forEach(function(s){s.value=50;});onSlider();});
+document.getElementById('lbtn').addEventListener('click',checkAnswer);
+
+var isDrag=false,pX=0,pY=0;
+cv.addEventListener('pointerdown',function(e){isDrag=true;pX=e.clientX;pY=e.clientY;});
+window.addEventListener('pointerup',function(){isDrag=false;});
+window.addEventListener('pointermove',function(e){if(!isDrag)return;tRY+=(e.clientX-pX)*0.005;tRX+=(e.clientY-pY)*0.004;tRX=Math.max(0.15,Math.min(1.1,tRX));pX=e.clientX;pY=e.clientY;});
+var t0=null;
+cv.addEventListener('touchstart',function(e){if(e.touches.length===1){t0={x:e.touches[0].clientX,y:e.touches[0].clientY};e.preventDefault();}},{passive:false});
+cv.addEventListener('touchmove',function(e){if(t0&&e.touches.length===1){tRY+=(e.touches[0].clientX-t0.x)*0.005;tRX+=(e.touches[0].clientY-t0.y)*0.004;tRX=Math.max(0.15,Math.min(1.1,tRX));t0={x:e.touches[0].clientX,y:e.touches[0].clientY};e.preventDefault();}},{passive:false});
+cv.addEventListener('touchend',function(){t0=null;});
+
+function anim(){requestAnimationFrame(anim);
+  rY+=(tRY-rY)*0.08;rX+=(tRX-rX)*0.08;
+  bp.x+=(bt.x-bp.x)*0.05;bp.y+=(bt.y-bp.y)*0.05;bp.z+=(bt.z-bp.z)*0.05;
+  bl.position.set(bp.x,bp.y,bp.z);gw.position.set(bp.x,bp.y,bp.z);
+  cam.position.x=Math.sin(rY)*Math.cos(rX)*camDist;cam.position.y=Math.sin(rX)*camDist;cam.position.z=Math.cos(rY)*Math.cos(rX)*camDist;
+  cam.lookAt(0,-0.5,0);ren.render(sc,cam);
+}
+
+window.addEventListener('resize',function(){W=innerWidth;H=innerHeight;cam.aspect=W/H;cam.updateProjectionMatrix();ren.setSize(W,H);});
+
+setupLevel();anim();
+})();
 </script>
 </body>
 </html>
