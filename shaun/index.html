@@ -52,7 +52,6 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── Header ── */
   .header {
     padding: 24px 0 8px;
     display: flex;
@@ -75,7 +74,6 @@
     letter-spacing: 0.02em;
   }
 
-  /* ── Tabs ── */
   .tabs {
     display: flex;
     gap: 6px;
@@ -117,7 +115,6 @@
     border-color: var(--accent);
   }
 
-  /* ── Section Labels ── */
   .section-label {
     font-size: 11px;
     font-weight: 700;
@@ -130,7 +127,6 @@
   .section-label.strength { color: var(--strength); }
   .section-label.bounce { color: var(--bounce); }
 
-  /* ── Card ── */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -139,7 +135,6 @@
     margin-bottom: 8px;
   }
 
-  /* ── Exercise Block ── */
   .exercise-block { margin-bottom: 4px; }
   .exercise-block:last-child { margin-bottom: 0; }
   .exercise-header {
@@ -198,7 +193,6 @@
     font-weight: 700;
   }
 
-  /* ── Input Row ── */
   .input-row {
     display: flex;
     align-items: center;
@@ -206,9 +200,7 @@
     margin-left: 36px;
     margin-top: 6px;
   }
-  .input-row + .input-row {
-    margin-top: 4px;
-  }
+  .input-row + .input-row { margin-top: 4px; }
   .input-group {
     display: flex;
     align-items: center;
@@ -239,12 +231,8 @@
   .num-field:focus { border-color: var(--strength); }
   .num-field.bounce-field { color: var(--bounce); }
   .num-field.bounce-field:focus { border-color: var(--bounce); }
-  .input-unit {
-    font-size: 11px;
-    color: var(--text-3);
-  }
+  .input-unit { font-size: 11px; color: var(--text-3); }
 
-  /* ── Superset Badge ── */
   .superset-badge {
     display: inline-block;
     font-size: 10px;
@@ -259,14 +247,12 @@
     vertical-align: middle;
   }
 
-  /* ── Divider inside card ── */
   .card-divider {
     border: none;
     border-top: 1px solid var(--border);
     margin: 14px 0;
   }
 
-  /* ── Emotion Slider Row ── */
   .metric-row {
     display: flex;
     align-items: center;
@@ -274,25 +260,10 @@
     padding: 6px 0;
   }
   .metric-row + .metric-row { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 6px; }
-  .metric-name {
-    font-size: 14px;
-    font-weight: 500;
-    flex: 1;
-  }
-  .metric-name-wrap {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-  .metric-name-wrap .metric-name {
-    flex: none;
-  }
-  .metric-desc {
-    font-size: 11px;
-    color: var(--text-3);
-    line-height: 1.3;
-  }
+  .metric-name { font-size: 14px; font-weight: 500; flex: 1; }
+  .metric-name-wrap { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+  .metric-name-wrap .metric-name { flex: none; }
+  .metric-desc { font-size: 11px; color: var(--text-3); line-height: 1.3; }
   .metric-value {
     font-family: var(--font-display);
     font-size: 18px;
@@ -329,7 +300,6 @@
     cursor: grab;
   }
 
-  /* ── Notes ── */
   .notes-field {
     width: 100%;
     min-height: 60px;
@@ -347,7 +317,6 @@
   .notes-field:focus { border-color: var(--accent); }
   .notes-field::placeholder { color: var(--text-3); }
 
-  /* ── Submit ── */
   .submit-btn {
     width: 100%;
     padding: 14px;
@@ -366,7 +335,6 @@
   .submit-btn:active { transform: scale(0.98); }
   .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
-  /* ── Graph ── */
   .graph-container {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -374,223 +342,53 @@
     padding: 16px;
     margin-top: 4px;
   }
-  .graph-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
+  .graph-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   .graph-title { font-size: 14px; font-weight: 600; }
   .graph-legend { display: flex; gap: 12px; flex-wrap: wrap; }
   .legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-2); }
   .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
   .graph-canvas-wrap { position: relative; height: 180px; }
   canvas { width: 100% !important; height: 100% !important; }
-
-  .graph-toggle {
-    display: flex;
-    gap: 4px;
-    background: var(--surface-3);
-    border-radius: 16px;
-    padding: 2px;
-  }
+  .graph-toggle { display: flex; gap: 4px; background: var(--surface-3); border-radius: 16px; padding: 2px; }
   .graph-toggle button {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 14px;
-    border: none;
-    cursor: pointer;
-    background: transparent;
-    color: var(--text-3);
-    transition: all 0.2s;
+    font-family: var(--font-body); font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 14px; border: none; cursor: pointer;
+    background: transparent; color: var(--text-3); transition: all 0.2s;
   }
   .graph-toggle button.active { background: var(--text); color: var(--bg); }
+  .empty-graph { display: flex; align-items: center; justify-content: center; height: 180px; color: var(--text-3); font-size: 13px; }
 
-  .empty-graph {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 180px;
-    color: var(--text-3);
-    font-size: 13px;
-  }
+  .diary-entry { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; }
+  .diary-date { font-family: var(--font-display); font-size: 14px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+  .diary-session-badge { font-size: 11px; font-weight: 600; color: var(--accent); background: var(--accent-glow); padding: 2px 8px; border-radius: 12px; }
+  .diary-exercise { display: flex; align-items: baseline; gap: 8px; padding: 4px 0; font-size: 13px; }
+  .diary-exercise + .diary-exercise { border-top: 1px solid var(--border); padding-top: 6px; margin-top: 2px; }
+  .diary-ex-name { color: var(--text-2); flex: 1; }
+  .diary-ex-data { color: var(--text); font-family: var(--font-display); font-weight: 600; font-size: 13px; text-align: right; white-space: nowrap; }
+  .diary-emotions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+  .diary-emotion-chip { font-size: 11px; color: var(--emotion); background: var(--emotion-glow); padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .diary-notes { font-size: 12px; color: var(--text-3); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-style: italic; line-height: 1.4; }
+  .diary-empty { text-align: center; color: var(--text-3); font-size: 13px; padding: 24px 0; }
 
-  /* ── Diary ── */
-  .diary-entry {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    margin-bottom: 8px;
-  }
-  .diary-date {
-    font-family: var(--font-display);
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .diary-session-badge {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--accent);
-    background: var(--accent-glow);
-    padding: 2px 8px;
-    border-radius: 12px;
-  }
-  .diary-exercise {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding: 4px 0;
-    font-size: 13px;
-  }
-  .diary-exercise + .diary-exercise {
-    border-top: 1px solid var(--border);
-    padding-top: 6px;
-    margin-top: 2px;
-  }
-  .diary-ex-name {
-    color: var(--text-2);
-    flex: 1;
-  }
-  .diary-ex-data {
-    color: var(--text);
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 13px;
-    text-align: right;
-    white-space: nowrap;
-  }
-  .diary-emotions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--border);
-  }
-  .diary-emotion-chip {
-    font-size: 11px;
-    color: var(--emotion);
-    background: var(--emotion-glow);
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-weight: 600;
-  }
-  .diary-notes {
-    font-size: 12px;
-    color: var(--text-3);
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--border);
-    font-style: italic;
-    line-height: 1.4;
-  }
-  .diary-empty {
-    text-align: center;
-    color: var(--text-3);
-    font-size: 13px;
-    padding: 24px 0;
-  }
+  .book-call-wrap { margin-top: 8px; }
+  .book-call-header { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; }
+  .book-call-icon { width: 40px; height: 40px; background: var(--accent-glow); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .book-call-icon svg { width: 20px; height: 20px; color: var(--accent); }
+  .book-call-title { font-family: var(--font-display); font-size: 16px; font-weight: 600; }
+  .book-call-desc { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+  .book-call-embed { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; height: 600px; }
+  .book-call-embed iframe { display: block; }
+  .book-call-fallback { text-align: center; padding: 10px 0 0; font-size: 12px; color: var(--text-3); }
+  .book-call-fallback a { color: var(--accent); text-decoration: none; }
+  .book-call-fallback a:hover { text-decoration: underline; }
 
-  /* ── Book Call ── */
-  .book-call-wrap {
-    margin-top: 8px;
-  }
-  .book-call-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    margin-bottom: 8px;
-  }
-  .book-call-icon {
-    width: 40px;
-    height: 40px;
-    background: var(--accent-glow);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .book-call-icon svg {
-    width: 20px;
-    height: 20px;
-    color: var(--accent);
-  }
-  .book-call-title {
-    font-family: var(--font-display);
-    font-size: 16px;
-    font-weight: 600;
-  }
-  .book-call-desc {
-    font-size: 12px;
-    color: var(--text-2);
-    margin-top: 2px;
-  }
-  .book-call-embed {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    height: 600px;
-  }
-  .book-call-embed iframe {
-    display: block;
-  }
-  .book-call-fallback {
-    text-align: center;
-    padding: 10px 0 0;
-    font-size: 12px;
-    color: var(--text-3);
-  }
-  .book-call-fallback a {
-    color: var(--accent);
-    text-decoration: none;
-  }
-  .book-call-fallback a:hover {
-    text-decoration: underline;
-  }
-
-  /* ── Status Bar ── */
-  .status-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 12px 16px;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 600;
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-    z-index: 100;
-  }
+  .status-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px; text-align: center; font-size: 13px; font-weight: 600; transform: translateY(100%); transition: transform 0.3s ease; z-index: 100; }
   .status-bar.show { transform: translateY(0); }
   .status-bar.success { background: #1a3a2a; color: #5CCFB5; }
   .status-bar.error { background: #3a1a1a; color: #EF6C6C; }
   .status-bar.loading { background: #1a2a3a; color: var(--accent); }
 
-  .admin-toggle {
-    font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text-3);
-    cursor: pointer;
-    font-family: var(--font-body);
-    transition: all 0.2s;
-  }
+  .admin-toggle { font-size: 11px; padding: 4px 8px; border-radius: 12px; border: 1px solid var(--border); background: transparent; color: var(--text-3); cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
   .admin-toggle:hover { border-color: var(--text-3); }
   .admin-toggle.active { background: var(--accent-glow); color: var(--accent); border-color: var(--accent); }
 </style>
@@ -627,34 +425,39 @@ const CONFIG = {
       bounces: {
         letter: 'A',
         name: 'Plyometrics',
-        rx: 'Squat Box Jumps + Cross-Extensor Hops · 4 sets each',
-        variants: ['Squat Box Jumps — full squat reset between jumps', 'Cross-Extensor Hops — light and reactive'],
+        rx: 'Box Broad Jumps + Hop (2 across, 1 up) · 3–5 sets',
+        variants: [
+          'Box Broad Jumps — seated on ≈12" box, jump to 24" box',
+          'Hop — 2 hops for distance + 1 for height = 6–9 hops per set',
+        ],
         track: [
-          { id: 'fa_sbj_jumps', label: 'Box Jumps', unit: 'jumps' },
-          { id: 'fa_ceh_reps', label: 'X-Ext Hops', unit: '/leg' },
+          { id: 'fa_bbj_sets', label: 'Broad Jump sets', unit: '' },
+          { id: 'fa_bbj_jumps', label: 'Jumps/set', unit: '' },
+          { id: 'fa_hop_sets', label: 'Hop sets', unit: '' },
+          { id: 'fa_hop_reps', label: 'Hops/set', unit: '' },
         ],
         progression: [
-          '4×3 jumps · 4×15/leg hops — establish height & rhythm',
-          '4×4 jumps · 4×16/leg hops — +1 jump, +1 hop/leg',
-          '4×5 jumps · 4×17/leg hops — top of range, assess box height',
-          '4×3 jumps (↑ box) · 4×18/leg hops — higher box or reset',
-          '4×4 jumps · 4×19/leg hops — +1 jump at new height',
-          '4×5 jumps · 4×20/leg hops — final session, top of range',
+          '3×3 broad jumps · 3×6 hops — establish rhythm',
+          '3×4 broad jumps · 3×7 hops — +1 jump, +1 hop',
+          '3×5 broad jumps · 3×8 hops — +1 jump, +1 hop',
+          '4×3 broad jumps · 4×6 hops — +1 set, reset reps',
+          '4×4 broad jumps · 4×7 hops — +1 jump, +1 hop',
+          '4×5 broad jumps · 4×8 hops — +1 jump, +1 hop',
         ],
       },
       exercises: [
         {
           letter: 'B',
-          name: 'Calf Machine / Smith Machine (heels elevated)',
-          rx: '1 set · reps to failure · 2–3 min rest',
+          name: 'Calf Machine',
+          rx: '1 set · reps to failure · 80 kg minimum · 2–3 min rest',
           track: [
             { id: 'fa_calf_load', label: 'Load', unit: 'kg' },
             { id: 'fa_calf_reps', label: 'Reps', unit: '' },
           ],
           progression: [
-            '60 kg · 10+ to failure — baseline',
-            '60 kg · beat last session — +1–2 reps',
-            '62.5 kg if hit 12+ last time, else stay — to failure',
+            '80 kg · to failure — baseline',
+            '80 kg · beat last session — push reps',
+            '82.5 kg if hit 12+ last time, else stay — to failure',
             'Same load · beat last session — push reps',
             '+2.5 kg if hit 12+ last time — to failure',
             'Same load · rep PR — final session',
@@ -662,18 +465,18 @@ const CONFIG = {
         },
         {
           letter: 'C',
-          name: 'Garhammer Raise (incline)',
-          rx: '1 set · reps to failure · 2–3 min rest',
+          name: 'Yoga Ball Sit Up',
+          rx: '1 set · 6+ reps · +2.5 kg when reaching 10 reps',
           track: [
-            { id: 'fa_ghr_load', label: 'Load', unit: 'kg' },
-            { id: 'fa_ghr_reps', label: 'Reps', unit: '' },
+            { id: 'fa_ybsu_load', label: 'Load', unit: 'kg' },
+            { id: 'fa_ybsu_reps', label: 'Reps', unit: '' },
           ],
           progression: [
-            '5 kg · 8+ to failure — baseline',
-            '5 kg · beat last session — +1–2 reps',
-            '7.5 kg if hit 12+ last time, else stay — to failure',
+            '5 kg × 6+ — baseline',
+            '5 kg · beat last session — push reps',
+            '7.5 kg if hit 10+ last time, else stay — 6+ reps',
             'Same load · beat last session — push reps',
-            '+2.5 kg if hit 12+ last time — to failure',
+            '+2.5 kg if hit 10+ last time — 6+ reps',
             'Same load · rep PR — final session',
           ],
         },
@@ -687,47 +490,46 @@ const CONFIG = {
             { id: 'fa_zbl_reps', label: 'Reps', unit: '/side' },
           ],
           progression: [
-            '57.5 kg × 6/side — +2.5 kg from baseline, reset to 6',
-            '57.5 kg × 7/side — +1 rep',
-            '57.5 kg × 8/side — +1 rep, top of range',
-            '60 kg × 6/side — +2.5 kg, reset to 6',
-            '60 kg × 7/side — +1 rep',
-            '60 kg × 8/side — +1 rep, top of range',
+            '65 kg × 6/side — baseline',
+            '65 kg × 7/side — +1 rep',
+            '65 kg × 8/side — +1 rep',
+            '67.5 kg × 6/side — +2.5 kg, reset to 6',
+            '67.5 kg × 7/side — +1 rep',
+            '67.5 kg × 8/side — +1 rep',
           ],
         },
         {
           letter: 'D2',
-          name: 'Chin Ups (Feet Elev. Eccentric)',
-          rx: '1 set · 6–8 reps · 3 min rest · slow 3–5 sec down',
+          name: 'Chin Up (Feet Elev. Eccentric)',
+          rx: '1 set · build to 12 reps · slow 3–5 sec down',
           badge: 'Superset',
           track: [
             { id: 'fa_acu_reps', label: 'Reps', unit: '' },
           ],
           progression: [
-            '6 reps · slow 3–5 sec eccentric — baseline',
-            '7 reps · same assistance',
-            '8 reps · same assistance',
-            '6 reps · reduce assistance — reset',
-            '7 reps · same assistance',
-            '8 reps · same assistance',
+            'Target 6 reps — slow eccentric',
+            'Target 7 reps — +1 rep',
+            'Target 8 reps — +1 rep',
+            'Target 9 reps — +1 rep',
+            'Target 10 reps — +1 rep',
+            'Target 11–12 reps — push toward 12',
           ],
         },
         {
           letter: 'E1',
-          name: 'Ring Ham Curls (2 up / 1 down)',
-          rx: '1 set · 6–8 reps per side · 1.5 min rest per side',
+          name: 'Straddle Down',
+          rx: '1 set · 4–8 reps',
           badge: 'Superset',
           track: [
-            { id: 'fa_rhc2_load', label: 'Load', unit: 'kg' },
-            { id: 'fa_rhc2_reps', label: 'Reps', unit: '/side' },
+            { id: 'fa_sd_reps', label: 'Reps', unit: '' },
           ],
           progression: [
-            'BW × 6/side — 2 legs up, 1 leg down. Start at 6',
-            'BW × 7/side — +1 rep',
-            'BW × 8/side — +1 rep',
-            '2.5 kg × 6/side — add light load, reset to 6',
-            '2.5 kg × 7/side — +1 rep',
-            '2.5 kg × 8/side — +1 rep',
+            '4 reps — establish movement',
+            '5 reps — +1 rep',
+            '6 reps — +1 rep',
+            '6 reps — consolidate',
+            '7 reps — +1 rep',
+            '8 reps — +1 rep',
           ],
         },
         {
@@ -740,44 +542,40 @@ const CONFIG = {
             { id: 'fa_bp_reps', label: 'Reps', unit: '' },
           ],
           progression: [
-            '52.5 kg × 6 — +2.5 kg from baseline, reset to 6',
-            '52.5 kg × 7 — +1 rep',
-            '52.5 kg × 8 — +1 rep, top of range',
-            '55 kg × 6 — +2.5 kg, reset to 6',
-            '55 kg × 7 — +1 rep',
-            '55 kg × 8 — +1 rep, top of range',
+            '57.5 kg × 6 — baseline',
+            '57.5 kg × 7 — +1 rep',
+            '57.5 kg × 8 — +1 rep',
+            '60 kg × 6 — +2.5 kg, reset to 6',
+            '60 kg × 7 — +1 rep',
+            '60 kg × 8 — +1 rep',
           ],
         },
       ],
     },
 
     'Full Body B': {
-      bounces: null,
+      bounces: {
+        letter: 'A',
+        name: 'Dynamic Flexibility',
+        rx: '2 sets × 15–20 reps · 1 min rest · gradually increase intensity across the set',
+        variants: ['Side Kicks', 'Front Kicks', 'Back Kicks'],
+        track: [
+          { id: 'fb_kicks_reps', label: 'Reps/exercise', unit: '' },
+        ],
+        progression: [
+          '2×15 reps each — establish rhythm, light intensity',
+          '2×16 reps each — +1 rep, slightly more range',
+          '2×17 reps each — +1 rep',
+          '2×18 reps each — +1 rep, increase intensity',
+          '2×19 reps each — +1 rep',
+          '2×20 reps each — top of range',
+        ],
+      },
       exercises: [
         {
-          letter: 'A1',
-          name: 'Zercher Horse Stance Isometric',
-          rx: '2 sets · 30–45 sec · 2–3 min rest',
-          badge: 'Superset',
-          track: [
-            { id: 'fb_zhsi_load_s1', label: 'S1 load', unit: 'kg' },
-            { id: 'fb_zhsi_sec_s1', label: 'S1 sec', unit: 's' },
-            { id: 'fb_zhsi_load_s2', label: 'S2 load', unit: 'kg' },
-            { id: 'fb_zhsi_sec_s2', label: 'S2 sec', unit: 's' },
-          ],
-          progression: [
-            '42.5 kg × 30 sec — +2.5 kg from baseline, reset to 30s',
-            '42.5 kg × 35 sec — +5 sec',
-            '42.5 kg × 40 sec — +5 sec',
-            '42.5 kg × 45 sec — +5 sec, approaching ceiling',
-            '45 kg × 30 sec — +2.5 kg, reset to 30 sec',
-            '45 kg × 35 sec — +5 sec',
-          ],
-        },
-        {
-          letter: 'A2',
+          letter: 'B1',
           name: 'Landmine Deadlift',
-          rx: '2 sets · 6–8 reps per side · 1.5 min rest per side',
+          rx: '2 sets · 5–8 reps per side · 1.5 min rest per side',
           badge: 'Superset',
           track: [
             { id: 'fb_lmdl_load_s1', label: 'S1 load', unit: 'kg' },
@@ -786,18 +584,38 @@ const CONFIG = {
             { id: 'fb_lmdl_reps_s2', label: 'S2 reps', unit: '' },
           ],
           progression: [
-            '17.5 kg × 6/side — +2.5 kg from baseline, reset to 6',
-            '17.5 kg × 7/side — +1 rep',
-            '17.5 kg × 8/side — +1 rep, top of range',
-            '20 kg × 6/side — +2.5 kg, reset to 6',
-            '20 kg × 7/side — +1 rep',
-            '20 kg × 8/side — +1 rep, top of range',
+            '25 kg × 5/side — baseline',
+            '25 kg × 6/side — +1 rep',
+            '25 kg × 7/side — +1 rep',
+            '27.5 kg × 5/side — +2.5 kg, reset to 5',
+            '27.5 kg × 6/side — +1 rep',
+            '27.5 kg × 7/side — +1 rep',
           ],
         },
         {
-          letter: 'B1',
-          name: 'Zercher Squat (heels elevated)',
+          letter: 'B2',
+          name: 'Straight Leg Row',
           rx: '2 sets · 6–8 reps · 3 min rest',
+          badge: 'Superset',
+          track: [
+            { id: 'fb_slr_load_s1', label: 'S1 load', unit: 'kg' },
+            { id: 'fb_slr_reps_s1', label: 'S1 reps', unit: '' },
+            { id: 'fb_slr_load_s2', label: 'S2 load', unit: 'kg' },
+            { id: 'fb_slr_reps_s2', label: 'S2 reps', unit: '' },
+          ],
+          progression: [
+            '45 kg × 6 — baseline',
+            '45 kg × 7 — +1 rep',
+            '45 kg × 8 — +1 rep',
+            '47.5 kg × 6 — +2.5 kg, reset to 6',
+            '47.5 kg × 7 — +1 rep',
+            '47.5 kg × 8 — +1 rep',
+          ],
+        },
+        {
+          letter: 'C1',
+          name: 'Zercher Squat (full foot)',
+          rx: '2 sets · 5–8 reps · 3 min rest · slightly wide stance',
           badge: 'Superset',
           track: [
             { id: 'fb_zsq_load_s1', label: 'S1 load', unit: 'kg' },
@@ -806,50 +624,12 @@ const CONFIG = {
             { id: 'fb_zsq_reps_s2', label: 'S2 reps', unit: '' },
           ],
           progression: [
-            '57.5 kg × 6 — +2.5 kg from baseline, reset to 6',
-            '57.5 kg × 7 — +1 rep',
-            '57.5 kg × 8 — +1 rep, top of range',
-            '60 kg × 6 — +2.5 kg, reset to 6',
-            '60 kg × 7 — +1 rep',
-            '60 kg × 8 — +1 rep, top of range',
-          ],
-        },
-        {
-          letter: 'B2',
-          name: 'Chin Ups (Feet Elev. Eccentric)',
-          rx: '2 sets · 6–8 reps · 3 min rest · slow 3–5 sec down',
-          badge: 'Superset',
-          track: [
-            { id: 'fb_acu_reps_s1', label: 'S1 reps', unit: '' },
-            { id: 'fb_acu_reps_s2', label: 'S2 reps', unit: '' },
-          ],
-          progression: [
-            '6 reps · slow 3–5 sec eccentric — baseline',
-            '7 reps · same assistance',
-            '8 reps · same assistance',
-            '6 reps · reduce assistance — reset',
-            '7 reps · same assistance',
-            '8 reps · same assistance',
-          ],
-        },
-        {
-          letter: 'C1',
-          name: 'Jefferson Curls',
-          rx: '2 sets · 6–8 reps · 3 min rest',
-          badge: 'Superset',
-          track: [
-            { id: 'fb_jc_load_s1', label: 'S1 load', unit: 'kg' },
-            { id: 'fb_jc_reps_s1', label: 'S1 reps', unit: '' },
-            { id: 'fb_jc_load_s2', label: 'S2 load', unit: 'kg' },
-            { id: 'fb_jc_reps_s2', label: 'S2 reps', unit: '' },
-          ],
-          progression: [
-            '12.5 kg × 6 — +2.5 kg from baseline, reset to 6',
-            '12.5 kg × 7 — +1 rep',
-            '12.5 kg × 8 — +1 rep, top of range',
-            '15 kg × 6 — +2.5 kg, reset to 6',
-            '15 kg × 7 — +1 rep',
-            '15 kg × 8 — +1 rep, top of range',
+            '65 kg × 5 — baseline, slightly wide stance',
+            '65 kg × 6 — +1 rep',
+            '65 kg × 7 — +1 rep',
+            '67.5 kg × 5 — +2.5 kg, reset to 5',
+            '67.5 kg × 6 — +1 rep',
+            '67.5 kg × 7 — +1 rep',
           ],
         },
         {
@@ -864,12 +644,12 @@ const CONFIG = {
             { id: 'fb_bp_reps_s2', label: 'S2 reps', unit: '' },
           ],
           progression: [
-            '52.5 kg × 6 — +2.5 kg from baseline, reset to 6',
-            '52.5 kg × 7 — +1 rep',
-            '52.5 kg × 8 — +1 rep, top of range',
-            '55 kg × 6 — +2.5 kg, reset to 6',
-            '55 kg × 7 — +1 rep',
-            '55 kg × 8 — +1 rep, top of range',
+            '57.5 kg × 6 — baseline',
+            '57.5 kg × 7 — +1 rep',
+            '57.5 kg × 8 — +1 rep',
+            '60 kg × 6 — +2.5 kg, reset to 6',
+            '60 kg × 7 — +1 rep',
+            '60 kg × 8 — +1 rep',
           ],
         },
       ],
@@ -886,18 +666,15 @@ function currentProgram() {
 }
 
 function getSessionCount(sessionName) {
-  const cutover = new Date('2026-03-01');
+  const cutover = new Date('2026-04-01');
   return state.history.filter(r => {
     const d = new Date(r.date);
     return r.session === sessionName && d >= cutover;
   }).length;
 }
 
-// Count how many past sessions (post-cutover) have actual data for this
-// exercise's tracked fields. An exercise counts as "done" if at least one
-// of its track fields has a non-empty value in that session row.
 function getExerciseCount(item) {
-  const cutover = new Date('2026-03-01');
+  const cutover = new Date('2026-04-01');
   const fieldIds = item.track.map(t => t.id);
   return state.history.filter(r => {
     const d = new Date(r.date);
@@ -1048,17 +825,9 @@ const state = {
 // RENDER
 // ════════════════════════════════════════════════════════════════
 
-function isDiary() {
-  return TABS[state.activeTab] === 'Diary';
-}
-
-function isBookCall() {
-  return TABS[state.activeTab] === 'Book Call';
-}
-
-function isSessionTab() {
-  return !isDiary() && !isBookCall();
-}
+function isDiary() { return TABS[state.activeTab] === 'Diary'; }
+function isBookCall() { return TABS[state.activeTab] === 'Book Call'; }
+function isSessionTab() { return !isDiary() && !isBookCall(); }
 
 function render() {
   const app = document.getElementById('app');
@@ -1090,14 +859,10 @@ function render() {
     ` : ''}
   `;
 
-  // FIX: Schedule chart drawing after DOM is fully laid out
   if (isSessionTab()) {
     renderLegend();
     if (state.history.length >= 2) {
-      // Use double-rAF to ensure the canvas element has been laid out with correct dimensions
-      requestAnimationFrame(() => {
-        requestAnimationFrame(drawChart);
-      });
+      requestAnimationFrame(() => { requestAnimationFrame(drawChart); });
     }
   }
 }
@@ -1132,9 +897,8 @@ function renderSessionForm(prog) {
       ${new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
     </div>
 
-    <!-- ── Bounces ── -->
     ${prog.bounces ? `
-      <div class="section-label bounce">Bounces</div>
+      <div class="section-label bounce">${prog.bounces.name}</div>
       <div class="card">
         <div class="exercise-block">
           <div class="exercise-header">
@@ -1164,7 +928,6 @@ function renderSessionForm(prog) {
       </div>
     ` : ''}
 
-    <!-- ── Exercises ── -->
     <div class="section-label strength">Exercises</div>
     <div class="card">
       ${prog.exercises.map((ex, i) => `
@@ -1197,7 +960,6 @@ function renderSessionForm(prog) {
       `).join('')}
     </div>
 
-    <!-- ── Emotion Check-in ── -->
     <div class="section-label emotion">Emotion Check-in</div>
     <div class="card">
       ${CONFIG.EMOTIONS.map(e => `
@@ -1216,7 +978,6 @@ function renderSessionForm(prog) {
       `).join('')}
     </div>
 
-    <!-- ── Notes ── -->
     <div class="section-label" style="color: var(--text-3)">Notes</div>
     <div class="card">
       <textarea class="notes-field" placeholder="Session notes, RPE, how it felt…"
@@ -1227,7 +988,6 @@ function renderSessionForm(prog) {
       ${state.submitting ? 'Saving…' : 'Log Session'}
     </button>
 
-    <!-- ── Trend Graph ── -->
     <div class="section-label" style="color: var(--text-3); margin-top: 12px;">Trends</div>
     <div class="graph-container">
       <div class="graph-header">
@@ -1260,27 +1020,14 @@ function renderDiaryView() {
 function setTab(i) {
   state.activeTab = i;
   state.tracking = {};
-  if (isDiary()) {
-    loadAllHistory();
-  } else if (isSessionTab()) {
-    loadHistory();
-  }
+  if (isDiary()) { loadAllHistory(); }
+  else if (isSessionTab()) { loadHistory(); }
   render();
 }
 
-function setEmotion(name, val) {
-  state.emotions[name] = parseInt(val);
-  render();
-}
-
-function setTracking(id, val) {
-  state.tracking[id] = val;
-}
-
-function setGraphMode(m) {
-  state.graphMode = m;
-  render();
-}
+function setEmotion(name, val) { state.emotions[name] = parseInt(val); render(); }
+function setTracking(id, val) { state.tracking[id] = val; }
+function setGraphMode(m) { state.graphMode = m; render(); }
 
 async function submitSession() {
   if (state.submitting) return;
@@ -1310,9 +1057,6 @@ async function submitSession() {
     state.tracking = {};
     state.notes = '';
 
-    // FIX: Retry-polling to catch new data from Google Apps Script
-    // GAS can take 3–8 seconds to process. We poll up to 5 times with
-    // increasing delays, stopping as soon as we see new data.
     const prevCount = state.history.length;
     const delays = [3000, 5000, 7000, 10000, 15000];
     for (let attempt = 0; attempt < delays.length; attempt++) {
@@ -1324,7 +1068,6 @@ async function submitSession() {
         if (data && data.rows) {
           state.history = data.rows;
           render();
-          // If we got more rows than before, the new entry landed
           if (data.rows.length > prevCount) {
             console.log(`New data found on attempt ${attempt + 1}`);
             break;
@@ -1403,9 +1146,7 @@ function drawChart() {
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.parentElement.getBoundingClientRect();
 
-  // FIX: Guard against zero-sized canvas (element not yet laid out)
   if (rect.width === 0 || rect.height === 0) {
-    // Retry on next frame
     requestAnimationFrame(drawChart);
     return;
   }
@@ -1415,8 +1156,6 @@ function drawChart() {
   canvas.style.width = rect.width + 'px';
   canvas.style.height = rect.height + 'px';
   ctx.scale(dpr, dpr);
-
-  // FIX: Clear canvas before redrawing so old data doesn't persist
   ctx.clearRect(0, 0, rect.width, rect.height);
 
   const W = rect.width, H = rect.height;
