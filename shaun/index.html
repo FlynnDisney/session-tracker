@@ -115,6 +115,18 @@
     border-color: var(--accent);
   }
 
+  .cuing-block {
+    background: var(--accent-glow);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 10px 14px;
+    margin: 6px 0 4px;
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
   .section-label {
     font-size: 11px;
     font-weight: 700;
@@ -184,6 +196,7 @@
     padding: 2px 0;
     position: relative;
     padding-left: 12px;
+    line-height: 1.5;
   }
   .exercise-variants li::before {
     content: '·';
@@ -232,6 +245,49 @@
   .num-field.bounce-field { color: var(--bounce); }
   .num-field.bounce-field:focus { border-color: var(--bounce); }
   .input-unit { font-size: 11px; color: var(--text-3); }
+
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 4px 0;
+    user-select: none;
+  }
+  .check-field {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--surface-3);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .check-field:hover { border-color: var(--bounce); }
+  .check-field:checked {
+    background: var(--bounce);
+    border-color: var(--bounce);
+  }
+  .check-field:checked::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 11px;
+    border: solid var(--bg);
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+  }
+  .check-label {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+  }
 
   .superset-badge {
     display: inline-block;
@@ -400,7 +456,7 @@
 
 <script>
 // ════════════════════════════════════════════════════════════════
-// CONFIGURATION — Shaun Malcolm
+// CONFIGURATION — Shaun Malcolm (V5)
 // ════════════════════════════════════════════════════════════════
 
 const CONFIG = {
@@ -411,7 +467,10 @@ const CONFIG = {
   BOOKING_URL: 'https://calendar.app.google/satpuXRvwEJYdUJF9',
   BOOKING_EMBED: 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ2UZIgMVBJS0lf-LRu7EBXFxK5NuQgM_wx0JH3kRxzkyCkXgZ4tVF0xlHORZJh1ExBnBu6fj5vD?gv=true',
 
-  SESSIONS: ['Full Body A', 'Full Body B'],
+  // V5 cutover: progression counts only sessions logged from this date forward
+  CUTOVER: '2026-05-06',
+
+  SESSIONS: ['Full Body A', 'Flexibility', 'Dynamic Flexibility'],
 
   EMOTIONS: [
     { name: 'Excitement', desc: 'Your energy level going into the session' },
@@ -422,237 +481,185 @@ const CONFIG = {
 
   PROGRAMS: {
     'Full Body A': {
+      cuing: 'Single sets per exercise · moderate weight & reps · partial valsalva, hssss breathing · low effort jumps — stimulus precision over performance',
       bounces: {
         letter: 'A',
-        name: 'Plyometrics',
-        rx: 'Box Broad Jumps + Hop Sprints · 3–5 sets',
+        name: 'Yielding & Overcoming Jumps',
+        rx: '10 min timer · build a sweat, maintain quality without fatiguing legs',
         variants: [
-          'Box Broad Jumps — seated on ≈12" box, jump to 24" box',
-          'Hop Sprints — 5 m per side, single leg',
+          'Yielding (quiet landings, control through the range): yielding jump, yielding hop sink, yielding back lunge',
+          'Overcoming (loud landings, fast effortless contacts): hop pogo, heiden bounds',
         ],
         track: [
-          { id: 'fa_bbj_sets', label: 'Broad Jump sets', unit: '' },
-          { id: 'fa_bbj_jumps', label: 'Jumps/set', unit: '' },
-          { id: 'fa_hs_dist', label: 'Hop Sprint dist', unit: 'm' },
-          { id: 'fa_hs_sprints', label: 'Sprints/side', unit: '' },
-        ],
-        progression: [
-          '3×3 broad jumps · 4 sprints/side × 5 m — establish rhythm',
-          '3×4 broad jumps · 5 sprints/side × 5 m — +1 jump, +1 sprint',
-          '3×5 broad jumps · 6 sprints/side × 5 m — +1 jump, +1 sprint',
-          '4×3 broad jumps · 7 sprints/side × 5 m — +1 set, +1 sprint',
-          '4×4 broad jumps · 8 sprints/side × 5 m — +1 jump, +1 sprint',
-          '4×5 broad jumps · 4 sprints/side × 8 m — +1 jump, +3 m reset to 4',
+          { id: 'fa_jumps_done', label: 'Completed', unit: '', type: 'checkbox' },
         ],
       },
       exercises: [
         {
+          letter: 'A',
+          name: 'Chin Up',
+          rx: '1 set · 6–12 reps close to failure · progressive overload each week',
+          track: [
+            { id: 'fa_chin_load', label: 'Load', unit: 'kg' },
+            { id: 'fa_chin_reps', label: 'Reps', unit: '' },
+          ],
+          progression: [
+            'BW × 6+ — close to failure',
+            'BW · beat last — push toward 12',
+            'BW × 12 → +2.5 kg next time',
+            '+2.5 kg × 6 — load added, reset to 6',
+            '+2.5 kg · beat last — push toward 12',
+            'At 12 with current load → +2.5 kg next time',
+          ],
+        },
+        {
           letter: 'B',
-          name: 'Calf Machine',
-          rx: '1 set · 80 kg · 6+ reps · 2–3 min rest',
-          track: [
-            { id: 'fa_calf_load', label: 'Load', unit: 'kg' },
-            { id: 'fa_calf_reps', label: 'Reps', unit: '' },
-          ],
-          progression: [
-            '80 kg × 6+ — baseline',
-            '80 kg · beat last session — push reps',
-            '82.5 kg if hit 12+ last time, else stay — 6+ reps',
-            'Same load · beat last session — push reps',
-            '+2.5 kg if hit 12+ last time — 6+ reps',
-            'Same load · rep PR — final session',
-          ],
-        },
-        {
-          letter: 'C',
-          name: 'Yoga Ball Sit Up',
-          rx: '1 set · 6+ reps · +2.5 kg when reaching 10 reps',
-          track: [
-            { id: 'fa_ybsu_load', label: 'Load', unit: 'kg' },
-            { id: 'fa_ybsu_reps', label: 'Reps', unit: '' },
-          ],
-          progression: [
-            '5 kg × 6+ — baseline',
-            '5 kg · beat last session — push reps',
-            '7.5 kg if hit 10+ last time, else stay — 6+ reps',
-            'Same load · beat last session — push reps',
-            '+2.5 kg if hit 10+ last time — 6+ reps',
-            'Same load · rep PR — final session',
-          ],
-        },
-        {
-          letter: 'D1',
-          name: 'Zercher Backward Lunge',
-          rx: '1 set · 6–8 reps per side · 2 min rest between sides',
-          badge: 'Superset',
-          track: [
-            { id: 'fa_zbl_load', label: 'Load', unit: 'kg' },
-            { id: 'fa_zbl_reps', label: 'Reps', unit: '/side' },
-          ],
-          progression: [
-            '65 kg × 6/side — baseline',
-            '65 kg × 7/side — +1 rep',
-            '65 kg × 8/side — +1 rep',
-            '67.5 kg × 6/side — +2.5 kg, reset to 6',
-            '67.5 kg × 7/side — +1 rep',
-            '67.5 kg × 8/side — +1 rep',
-          ],
-        },
-        {
-          letter: 'D2',
-          name: 'Chin Up (Feet Elev. Eccentric)',
-          rx: '1 set · build to 12 reps · slow 3–5 sec down',
-          badge: 'Superset',
-          track: [
-            { id: 'fa_acu_reps', label: 'Reps', unit: '' },
-          ],
-          progression: [
-            'Target 6 reps — slow eccentric',
-            'Target 7 reps — +1 rep',
-            'Target 8 reps — +1 rep',
-            'Target 9 reps — +1 rep',
-            'Target 10 reps — +1 rep',
-            'Target 11–12 reps — push toward 12',
-          ],
-        },
-        {
-          letter: 'E1',
-          name: 'Straddle Down',
-          rx: '1 set · 4–8 reps',
-          badge: 'Superset',
-          track: [
-            { id: 'fa_sd_reps', label: 'Reps', unit: '' },
-          ],
-          progression: [
-            '4 reps — establish movement',
-            '5 reps — +1 rep',
-            '6 reps — +1 rep',
-            '6 reps — consolidate',
-            '7 reps — +1 rep',
-            '8 reps — +1 rep',
-          ],
-        },
-        {
-          letter: 'E2',
           name: 'Bench Press',
-          rx: '1 set · 6–8 reps · 3 min rest',
-          badge: 'Superset',
+          rx: '1 set · 6–12 reps close to failure · 3 min rest',
           track: [
             { id: 'fa_bp_load', label: 'Load', unit: 'kg' },
             { id: 'fa_bp_reps', label: 'Reps', unit: '' },
           ],
           progression: [
-            '57.5 kg × 6 — baseline',
-            '57.5 kg × 7 — +1 rep',
-            '57.5 kg × 8 — +1 rep',
-            '60 kg × 6 — +2.5 kg, reset to 6',
-            '60 kg × 7 — +1 rep',
-            '60 kg × 8 — +1 rep',
+            '57.5 kg × 6+ — close to failure',
+            'Same load · beat last — push toward 12',
+            'Same load × 12 → +2.5 kg next time',
+            '+2.5 kg × 6 — load added, reset to 6',
+            'Same load · beat last — push toward 12',
+            'At 12 with current load → +2.5 kg next time',
+          ],
+        },
+        {
+          letter: 'C',
+          name: 'Zercher Squat',
+          rx: '1 set · 6–12 reps close to failure · 3 min rest',
+          track: [
+            { id: 'fa_zsq_load', label: 'Load', unit: 'kg' },
+            { id: 'fa_zsq_reps', label: 'Reps', unit: '' },
+          ],
+          progression: [
+            '65 kg × 6+ — close to failure',
+            'Same load · beat last — push toward 12',
+            'Same load × 12 → +2.5 kg next time',
+            '+2.5 kg × 6 — load added, reset to 6',
+            'Same load · beat last — push toward 12',
+            'At 12 with current load → +2.5 kg next time',
+          ],
+        },
+        {
+          letter: 'D',
+          name: 'Landmine Deadlift',
+          rx: '1 set · 6–12 reps per side close to failure',
+          track: [
+            { id: 'fa_lmdl_load', label: 'Load', unit: 'kg' },
+            { id: 'fa_lmdl_reps', label: 'Reps', unit: '/side' },
+          ],
+          progression: [
+            '25 kg × 6+/side — close to failure',
+            'Same load · beat last — push toward 12',
+            'Same load × 12/side → +2.5 kg next time',
+            '+2.5 kg × 6/side — load added, reset to 6',
+            'Same load · beat last — push toward 12',
+            'At 12 with current load → +2.5 kg next time',
+          ],
+        },
+        {
+          letter: 'E',
+          name: 'Calf Machine',
+          rx: '1 set · 6–12 reps close to failure',
+          track: [
+            { id: 'fa_calf_load', label: 'Load', unit: 'kg' },
+            { id: 'fa_calf_reps', label: 'Reps', unit: '' },
+          ],
+          progression: [
+            '80 kg × 6+ — close to failure',
+            'Same load · beat last — push toward 12',
+            'Same load × 12 → +2.5 kg next time',
+            '+2.5 kg × 6 — load added, reset to 6',
+            'Same load · beat last — push toward 12',
+            'At 12 with current load → +2.5 kg next time',
+          ],
+        },
+        {
+          letter: 'F',
+          name: 'Hanging Leg Raise',
+          rx: '1 set · 6–12 reps · +2.5 kg at 12 reps · → Straight Leg Toe to Bar after 12 reps with +2.5 kg',
+          track: [
+            { id: 'fa_hlr_load', label: 'Load', unit: 'kg' },
+            { id: 'fa_hlr_reps', label: 'Reps', unit: '' },
+          ],
+          progression: [
+            'BW × 6+ — close to failure',
+            'BW · beat last — push toward 12',
+            'BW × 12 → +2.5 kg next time',
+            '+2.5 kg × 6 — load added, reset to 6',
+            '+2.5 kg · beat last — push toward 12',
+            'At 12 with +2.5 kg → switch to Straight Leg Toe to Bar',
           ],
         },
       ],
     },
 
-    'Full Body B': {
-      bounces: {
-        letter: 'A',
-        name: 'Dynamic Flexibility',
-        rx: '2 sets × 15–20 reps · 1 min rest · gradually increase intensity across the set',
-        variants: ['Side Kicks', 'Front Kicks', 'Back Kicks'],
-        track: [
-          { id: 'fb_kicks_reps', label: 'Reps/exercise', unit: '' },
-        ],
-        progression: [
-          '2×15 reps each — establish rhythm, light intensity',
-          '2×16 reps each — +1 rep, slightly more range',
-          '2×17 reps each — +1 rep',
-          '2×18 reps each — +1 rep, increase intensity',
-          '2×19 reps each — +1 rep',
-          '2×20 reps each — top of range',
-        ],
-      },
+    'Flexibility': {
+      cuing: 'Primary effort comes from movement of the chest and / or pelvis — shorten the contracting side, lengthen the stretching side',
       exercises: [
         {
-          letter: 'B1',
-          name: 'Landmine Deadlift',
-          rx: '2 sets · 5–8 reps per side · 1.5 min rest per side',
-          badge: 'Superset',
+          letter: 'A',
+          name: 'Straddle Leg Raise',
+          rx: '2 sets · 3–8 reps · 3 sec hold',
           track: [
-            { id: 'fb_lmdl_load_s1', label: 'S1 load', unit: 'kg' },
-            { id: 'fb_lmdl_reps_s1', label: 'S1 reps', unit: '' },
-            { id: 'fb_lmdl_load_s2', label: 'S2 load', unit: 'kg' },
-            { id: 'fb_lmdl_reps_s2', label: 'S2 reps', unit: '' },
-          ],
-          progression: [
-            '25 kg × 5/side — baseline',
-            '25 kg × 6/side — +1 rep',
-            '25 kg × 7/side — +1 rep',
-            '27.5 kg × 5/side — +2.5 kg, reset to 5',
-            '27.5 kg × 6/side — +1 rep',
-            '27.5 kg × 7/side — +1 rep',
+            { id: 'fl_slr_sets', label: 'Sets', unit: '' },
           ],
         },
         {
-          letter: 'B2',
-          name: 'Straight Leg Row',
-          rx: '2 sets · 6–8 reps · 3 min rest',
-          badge: 'Superset',
+          letter: 'B',
+          name: 'Assisted Straddle Stretch',
+          rx: '3–5 sets · 30–60 sec holds · @ 3/10 discomfort',
           track: [
-            { id: 'fb_slr_load_s1', label: 'S1 load', unit: 'kg' },
-            { id: 'fb_slr_reps_s1', label: 'S1 reps', unit: '' },
-            { id: 'fb_slr_load_s2', label: 'S2 load', unit: 'kg' },
-            { id: 'fb_slr_reps_s2', label: 'S2 reps', unit: '' },
-          ],
-          progression: [
-            '45 kg × 6 — baseline',
-            '45 kg × 7 — +1 rep',
-            '45 kg × 8 — +1 rep',
-            '47.5 kg × 6 — +2.5 kg, reset to 6',
-            '47.5 kg × 7 — +1 rep',
-            '47.5 kg × 8 — +1 rep',
+            { id: 'fl_ass_sets', label: 'Sets', unit: '' },
           ],
         },
         {
-          letter: 'C1',
-          name: 'Zercher Squat (full foot)',
-          rx: '2 sets · 5–8 reps · 3 min rest · slightly wide stance',
-          badge: 'Superset',
+          letter: 'C',
+          name: 'Jefferson Curl Stretch',
+          rx: '3–5 sets · 30–60 sec holds · @ 1–3/10 discomfort',
           track: [
-            { id: 'fb_zsq_load_s1', label: 'S1 load', unit: 'kg' },
-            { id: 'fb_zsq_reps_s1', label: 'S1 reps', unit: '' },
-            { id: 'fb_zsq_load_s2', label: 'S2 load', unit: 'kg' },
-            { id: 'fb_zsq_reps_s2', label: 'S2 reps', unit: '' },
-          ],
-          progression: [
-            '65 kg × 5 — baseline, slightly wide stance',
-            '65 kg × 6 — +1 rep',
-            '65 kg × 7 — +1 rep',
-            '67.5 kg × 5 — +2.5 kg, reset to 5',
-            '67.5 kg × 6 — +1 rep',
-            '67.5 kg × 7 — +1 rep',
+            { id: 'fl_jc_sets', label: 'Sets', unit: '' },
           ],
         },
         {
-          letter: 'C2',
-          name: 'Bench Press',
-          rx: '2 sets · 6–8 reps · 3 min rest',
-          badge: 'Superset',
+          letter: 'D',
+          name: 'Couch Stretch',
+          rx: '3–5 sets · 30–60 sec holds · @ 3/10 discomfort',
           track: [
-            { id: 'fb_bp_load_s1', label: 'S1 load', unit: 'kg' },
-            { id: 'fb_bp_reps_s1', label: 'S1 reps', unit: '' },
-            { id: 'fb_bp_load_s2', label: 'S2 load', unit: 'kg' },
-            { id: 'fb_bp_reps_s2', label: 'S2 reps', unit: '' },
+            { id: 'fl_cs_sets', label: 'Sets', unit: '' },
           ],
-          progression: [
-            '57.5 kg × 6 — baseline',
-            '57.5 kg × 7 — +1 rep',
-            '57.5 kg × 8 — +1 rep',
-            '60 kg × 6 — +2.5 kg, reset to 6',
-            '60 kg × 7 — +1 rep',
-            '60 kg × 8 — +1 rep',
+        },
+        {
+          letter: 'E',
+          name: 'Wall Arch',
+          rx: '3–5 sets · 30–60 sec holds · @ 3/10 discomfort',
+          track: [
+            { id: 'fl_wa_sets', label: 'Sets', unit: '' },
           ],
         },
       ],
+    },
+
+    'Dynamic Flexibility': {
+      cuing: 'Perform every other day · increases stretch tolerance and gives a boost of energisation',
+      bounces: {
+        letter: 'A',
+        name: 'Daily Mobility Routine',
+        rx: 'Tick once completed · brief notes optional',
+        variants: [
+          'Leg Swings — Front, Back, Side · 10–20 reps × 1–2 sets · gradually increase speed across the set',
+        ],
+        track: [
+          { id: 'df_completed', label: 'Done today', unit: '', type: 'checkbox' },
+        ],
+      },
+      exercises: [],
     },
   },
 };
@@ -666,7 +673,7 @@ function currentProgram() {
 }
 
 function getSessionCount(sessionName) {
-  const cutover = new Date('2026-04-01');
+  const cutover = new Date(CONFIG.CUTOVER);
   return state.history.filter(r => {
     const d = new Date(r.date);
     return r.session === sessionName && d >= cutover;
@@ -674,7 +681,7 @@ function getSessionCount(sessionName) {
 }
 
 function getExerciseCount(item) {
-  const cutover = new Date('2026-04-01');
+  const cutover = new Date(CONFIG.CUTOVER);
   const fieldIds = item.track.map(t => t.id);
   return state.history.filter(r => {
     const d = new Date(r.date);
@@ -687,14 +694,20 @@ function getExerciseCount(item) {
   }).length;
 }
 
+function sessionLabel(name) {
+  if (name === 'Full Body A') return 'A';
+  if (name === 'Flexibility') return 'F';
+  if (name === 'Dynamic Flexibility') return 'D';
+  return name.charAt(0);
+}
+
 function getProgressionRx(item) {
   if (!item.progression) return item.rx;
   const sessionName = CONFIG.SESSIONS[state.activeTab];
   const count = getExerciseCount(item);
   const idx = Math.min(count, item.progression.length - 1);
-  const sessionLabel = sessionName === 'Full Body A' ? 'A' : 'B';
   const num = idx + 1;
-  return `<span style="color:var(--accent);font-weight:600;">Session ${sessionLabel}${num}:</span> ${item.progression[idx]}`;
+  return `<span style="color:var(--accent);font-weight:600;">Session ${sessionLabel(sessionName)}${num}:</span> ${item.progression[idx]}`;
 }
 
 function chunkPairs(arr) {
@@ -709,7 +722,7 @@ function allTrackIds() {
   const prog = currentProgram();
   let ids = [];
   if (prog.bounces) ids.push(...prog.bounces.track.map(t => t.id));
-  prog.exercises.forEach(ex => ids.push(...ex.track.map(t => t.id)));
+  (prog.exercises || []).forEach(ex => ids.push(...ex.track.map(t => t.id)));
   return ids;
 }
 
@@ -718,15 +731,39 @@ function getFieldLabel(fieldId, sessionName) {
   if (!prog) return null;
   if (prog.bounces) {
     for (const t of prog.bounces.track) {
-      if (t.id === fieldId) return { exercise: prog.bounces.name, label: t.label, unit: t.unit };
+      if (t.id === fieldId) return { exercise: prog.bounces.name, label: t.label, unit: t.unit, type: t.type };
     }
   }
-  for (const ex of prog.exercises) {
+  for (const ex of (prog.exercises || [])) {
     for (const t of ex.track) {
-      if (t.id === fieldId) return { exercise: ex.name, label: t.label, unit: t.unit };
+      if (t.id === fieldId) return { exercise: ex.name, label: t.label, unit: t.unit, type: t.type };
     }
   }
   return null;
+}
+
+// Render a single track input — handles checkbox or number type
+function renderTrackInput(t, isBounce) {
+  if (t.type === 'checkbox') {
+    const checked = state.tracking[t.id] == 1 ? 'checked' : '';
+    return `
+      <label class="checkbox-group">
+        <input type="checkbox" class="check-field" ${checked}
+               onchange="setTrackingBool('${t.id}', this.checked)" />
+        <span class="check-label">${t.label}</span>
+      </label>
+    `;
+  }
+  const fieldClass = isBounce ? 'num-field bounce-field' : 'num-field';
+  return `
+    <div class="input-group">
+      <span class="input-label">${t.label}</span>
+      <input type="number" class="${fieldClass}" placeholder="—"
+             value="${state.tracking[t.id] || ''}"
+             oninput="setTracking('${t.id}', this.value)" />
+      ${t.unit ? `<span class="input-unit">${t.unit}</span>` : ''}
+    </div>
+  `;
 }
 
 function renderDiaryEntry(entry) {
@@ -742,14 +779,18 @@ function renderDiaryEntry(entry) {
   const exerciseData = {};
   const allExercises = [];
   if (prog.bounces) allExercises.push({ name: prog.bounces.name, fields: prog.bounces.track });
-  prog.exercises.forEach(ex => allExercises.push({ name: ex.name, fields: ex.track }));
+  (prog.exercises || []).forEach(ex => allExercises.push({ name: ex.name, fields: ex.track }));
 
   allExercises.forEach(ex => {
     const values = [];
     ex.fields.forEach(t => {
       const val = entry.strength ? entry.strength[t.id] : '';
       if (val !== '' && val !== undefined && val !== null) {
-        values.push(t.label + ': ' + val + (t.unit ? ' ' + t.unit : ''));
+        if (t.type === 'checkbox') {
+          values.push(val == 1 ? '✓ Done' : '— Skipped');
+        } else {
+          values.push(t.label + ': ' + val + (t.unit ? ' ' + t.unit : ''));
+        }
       }
     });
     if (values.length > 0) {
@@ -795,7 +836,7 @@ function getLoadMetrics(sessionName) {
   const prog = CONFIG.PROGRAMS[sessionName];
   if (!prog) return [];
   let loads = [];
-  prog.exercises.forEach(ex => {
+  (prog.exercises || []).forEach(ex => {
     const loadField = ex.track.find(t => t.label === 'S1 load' || t.label === 'Load');
     if (loadField) loads.push({ id: loadField.id, name: ex.name });
   });
@@ -892,10 +933,15 @@ function renderBookCallView() {
 }
 
 function renderSessionForm(prog) {
+  const hasExercises = prog.exercises && prog.exercises.length > 0;
+  const hasLoadMetrics = getLoadMetrics(CONFIG.SESSIONS[state.activeTab]).length > 0;
+
   return `
     <div style="padding: 8px 0; font-size: 13px; color: var(--text-2);">
       ${new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
     </div>
+
+    ${prog.cuing ? `<div class="cuing-block">${prog.cuing}</div>` : ''}
 
     ${prog.bounces ? `
       <div class="section-label bounce">${prog.bounces.name}</div>
@@ -914,51 +960,37 @@ function renderSessionForm(prog) {
             </ul>
           ` : ''}
           <div class="input-row">
-            ${prog.bounces.track.map(t => `
-              <div class="input-group">
-                <span class="input-label">${t.label}</span>
-                <input type="number" class="num-field bounce-field" placeholder="—"
-                       value="${state.tracking[t.id] || ''}"
-                       oninput="setTracking('${t.id}', this.value)" />
-                ${t.unit ? `<span class="input-unit">${t.unit}</span>` : ''}
-              </div>
-            `).join('')}
+            ${prog.bounces.track.map(t => renderTrackInput(t, true)).join('')}
           </div>
         </div>
       </div>
     ` : ''}
 
-    <div class="section-label strength">Exercises</div>
-    <div class="card">
-      ${prog.exercises.map((ex, i) => `
-        ${i > 0 ? '<hr class="card-divider">' : ''}
-        <div class="exercise-block">
-          <div class="exercise-header">
-            <div class="exercise-letter">${ex.letter}</div>
-            <div class="exercise-info">
-              <div class="exercise-name">
-                ${ex.name}
-                ${ex.badge ? `<span class="superset-badge">${ex.badge}</span>` : ''}
+    ${hasExercises ? `
+      <div class="section-label strength">Exercises</div>
+      <div class="card">
+        ${prog.exercises.map((ex, i) => `
+          ${i > 0 ? '<hr class="card-divider">' : ''}
+          <div class="exercise-block">
+            <div class="exercise-header">
+              <div class="exercise-letter">${ex.letter}</div>
+              <div class="exercise-info">
+                <div class="exercise-name">
+                  ${ex.name}
+                  ${ex.badge ? `<span class="superset-badge">${ex.badge}</span>` : ''}
+                </div>
+                <div class="exercise-rx">${getProgressionRx(ex)}</div>
               </div>
-              <div class="exercise-rx">${getProgressionRx(ex)}</div>
             </div>
-          </div>
-          ${chunkPairs(ex.track).map(pair => `
-          <div class="input-row">
-            ${pair.map(t => `
-              <div class="input-group">
-                <span class="input-label">${t.label}</span>
-                <input type="number" class="num-field" placeholder="—"
-                       value="${state.tracking[t.id] || ''}"
-                       oninput="setTracking('${t.id}', this.value)" />
-                ${t.unit ? `<span class="input-unit">${t.unit}</span>` : ''}
-              </div>
+            ${chunkPairs(ex.track).map(pair => `
+            <div class="input-row">
+              ${pair.map(t => renderTrackInput(t, false)).join('')}
+            </div>
             `).join('')}
           </div>
-          `).join('')}
-        </div>
-      `).join('')}
-    </div>
+        `).join('')}
+      </div>
+    ` : ''}
 
     <div class="section-label emotion">Emotion Check-in</div>
     <div class="card">
@@ -992,10 +1024,12 @@ function renderSessionForm(prog) {
     <div class="graph-container">
       <div class="graph-header">
         <span class="graph-title">Progress</span>
-        <div class="graph-toggle">
-          <button class="${state.graphMode === 'emotions' ? 'active' : ''}" onclick="setGraphMode('emotions')">Emotions</button>
-          <button class="${state.graphMode === 'strength' ? 'active' : ''}" onclick="setGraphMode('strength')">Loads</button>
-        </div>
+        ${hasLoadMetrics ? `
+          <div class="graph-toggle">
+            <button class="${state.graphMode === 'emotions' ? 'active' : ''}" onclick="setGraphMode('emotions')">Emotions</button>
+            <button class="${state.graphMode === 'strength' ? 'active' : ''}" onclick="setGraphMode('strength')">Loads</button>
+          </div>
+        ` : ''}
       </div>
       <div class="graph-legend" id="legend"></div>
       <div class="graph-canvas-wrap">
@@ -1020,6 +1054,10 @@ function renderDiaryView() {
 function setTab(i) {
   state.activeTab = i;
   state.tracking = {};
+  // Force emotions mode if no load metrics on this tab
+  if (isSessionTab() && getLoadMetrics(CONFIG.SESSIONS[i]).length === 0) {
+    state.graphMode = 'emotions';
+  }
   if (isDiary()) { loadAllHistory(); }
   else if (isSessionTab()) { loadHistory(); }
   render();
@@ -1027,6 +1065,7 @@ function setTab(i) {
 
 function setEmotion(name, val) { state.emotions[name] = parseInt(val); render(); }
 function setTracking(id, val) { state.tracking[id] = val; }
+function setTrackingBool(id, checked) { state.tracking[id] = checked ? 1 : 0; }
 function setGraphMode(m) { state.graphMode = m; render(); }
 
 async function submitSession() {
